@@ -1,0 +1,2663 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+        <meta name="mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
+  <style>
+html, body {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+#topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 90px;
+    background: #bfe8ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 18px;
+    box-sizing: border-box;
+    z-index: 2000;
+    border-bottom: 1px solid #8cc9e8;
+}
+
+.topbar-left,
+.topbar-right {
+    display: flex;
+    align-items: center;
+}
+
+.topbar-left {
+    gap: 12px;
+    min-width: 0;
+    flex: 1;
+}
+
+.topbar-right {
+    gap: 10px;
+    margin-left: 20px;
+    flex-shrink: 0;
+}
+
+.topbar-title {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #003b5c;
+    line-height: 1.2;
+    white-space: normal;
+}
+
+.topbar-title .main-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #003b5c;
+}
+
+.topbar-title .sub-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e5676;
+    margin-top: 3px;
+}
+
+.topbar-university-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: #003b5c;
+    line-height: 1.2;
+    text-align: center;
+    white-space: normal;
+}
+
+.topbar-university-text .uni-line-1 {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.topbar-university-text .uni-line-2 {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.topbar-university-text .uni-line-3 {
+    font-size: 11px;
+    font-weight: 600;
+    margin-top: 1px;
+}
+
+.topbar-logo {
+    display: block;
+    object-fit: contain;
+    flex-shrink: 0;
+}
+
+.kru-logo {
+    height: 58px;
+    width: auto;
+}
+
+.up-logo {
+    height: 52px;
+    width: auto;
+}
+
+#map {
+    position: absolute;
+    top: 90px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 90px);
+}
+
+/* Leaflet controls poshtë header-it */
+.leaflet-top {
+    top: 95px;
+}
+
+.leaflet-right .leaflet-control {
+    margin-right: 10px;
+}
+
+.leaflet-left .leaflet-control {
+    margin-left: 10px;
+}
+
+@media screen and (max-width: 1300px) {
+    #topbar {
+        height: auto;
+        min-height: 100px;
+        flex-wrap: wrap;
+        row-gap: 8px;
+    }
+
+    .topbar-left,
+    .topbar-right {
+        width: 100%;
+    }
+
+    .topbar-right {
+        justify-content: flex-end;
+        margin-left: 0;
+    }
+
+    .topbar-title .main-title {
+    font-size: 18px;
+}
+
+.topbar-title .sub-title {
+    font-size: 13px;
+}
+
+    .topbar-university-text .uni-line-1,
+.topbar-university-text .uni-line-2 {
+    font-size: 11px;
+}
+
+.topbar-university-text .uni-line-3 {
+    font-size: 9px;
+}
+
+    .kru-logo,
+    .up-logo {
+        height: 44px;
+    }
+
+    #map {
+        top: 110px;
+        height: calc(100% - 110px);
+    }
+
+    .leaflet-top {
+        top: 115px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #topbar {
+        padding: 8px 10px;
+    }
+
+    .topbar-title .main-title {
+    font-size: 15px;
+}
+
+.topbar-title .sub-title {
+    font-size: 11px;
+}
+
+    .topbar-university-text .uni-line-1,
+.topbar-university-text .uni-line-2 {
+    font-size: 10px;
+}
+
+.topbar-university-text .uni-line-3 {
+    font-size: 8px;
+}
+
+    .kru-logo,
+    .up-logo {
+        height: 38px;
+    }
+}
+#bottombar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+    background: #4b2e22;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 14px;
+    box-sizing: border-box;
+    z-index: 2000;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    border-top: 1px solid #2f1c14;
+}
+
+#bottom-left,
+#bottom-center,
+#bottom-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+#bottom-left {
+    justify-content: flex-start;
+}
+
+#bottom-center {
+    justify-content: center;
+    font-weight: bold;
+}
+
+#bottom-right {
+    justify-content: flex-end;
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.author-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.author-symbol {
+    width: auto;
+    height: auto;
+    border: none;
+    border-radius: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: bold;
+    line-height: 1;
+}
+.author-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+#map {
+    position: absolute;
+    top: 90px;
+    left: 0;
+    width: 100%;
+    height: calc(100% - 90px - 32px);
+}
+
+.leaflet-bottom {
+    bottom: 34px;
+}
+
+@media screen and (max-width: 1300px) {
+    #map {
+        top: 110px;
+        height: calc(100% - 110px - 32px);
+    }
+
+    .leaflet-bottom {
+        bottom: 34px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #bottombar {
+        font-size: 11px;
+        height: 30px;
+        padding: 0 8px;
+    }
+
+    #map {
+        height: calc(100% - 110px - 30px);
+    }
+
+    .leaflet-bottom {
+        bottom: 32px;
+    }
+
+    .author-symbol {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+    }
+}
+/* SIDEBAR */
+#geoportal-sidebar {
+    position: fixed;
+    top: 110px;
+    left: 12px;
+    bottom: 44px;
+    width: 320px;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+    z-index: 1800;
+    overflow-y: auto;
+    overflow-x: hidden;
+    border: 1px solid #d7d7d7;
+    backdrop-filter: blur(4px);
+}
+
+.sidebar-header {
+    background: linear-gradient(135deg, #0d4c73, #1e6d99);
+    color: #fff;
+    padding: 14px 16px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 14px 14px 0 0;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+.sidebar-content {
+    padding: 12px;
+}
+
+.sidebar-section {
+    margin-bottom: 12px;
+    border: 1px solid #e3e3e3;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.sidebar-section-title {
+    background: #f2f6f9;
+    color: #123c56;
+    font-weight: bold;
+    padding: 10px 12px;
+    font-size: 14px;
+    border-bottom: 1px solid #e2e8ee;
+}
+
+.sidebar-section-body {
+    padding: 10px 12px;
+}
+
+.sidebar-btn,
+.sidebar-link-btn,
+.sidebar-input,
+.sidebar-select {
+    width: 100%;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+    font-size: 13px;
+    border-radius: 8px;
+}
+
+.sidebar-btn,
+.sidebar-link-btn {
+    border: none;
+    background: #0d5f8f;
+    color: #fff;
+    padding: 9px 10px;
+    cursor: pointer;
+    margin-bottom: 8px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.sidebar-btn:hover,
+.sidebar-link-btn:hover {
+    background: #0a4d74;
+}
+
+.sidebar-btn.secondary {
+    background: #5b3a29;
+}
+
+.sidebar-btn.secondary:hover {
+    background: #44291d;
+}
+
+.sidebar-input,
+.sidebar-select {
+    border: 1px solid #cfd9e2;
+    padding: 9px 10px;
+    margin-bottom: 8px;
+    background: #fff;
+    color: #222;
+}
+
+.sidebar-row {
+    display: flex;
+    gap: 8px;
+}
+
+.sidebar-small-note {
+    font-size: 11px;
+    color: #666;
+    margin-top: 4px;
+    line-height: 1.35;
+}
+
+.sidebar-success {
+    color: #0b6e2b;
+    font-size: 12px;
+    margin-top: 6px;
+}
+
+.sidebar-error {
+    color: #b00020;
+    font-size: 12px;
+    margin-top: 6px;
+}
+.symbology-legend {
+    margin-top: 10px;
+    padding: 8px 10px;
+    border: 1px solid #d9e2ea;
+    border-radius: 8px;
+    background: #f8fbfd;
+    display: none;
+}
+
+.symbology-legend-title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #123c56;
+    margin-bottom: 8px;
+}
+
+.symbology-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 12px;
+    color: #333;
+}
+
+.symbology-legend-color {
+    width: 18px;
+    height: 12px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,0,0,0.25);
+    flex-shrink: 0;
+}
+
+.symbology-legend-line {
+    width: 24px;
+    background: #2c5bf6;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
+.symbology-legend-empty {
+    font-size: 11px;
+    color: #666;
+}
+
+/* Leaflet controls ne sidebar */
+#tool-measure-container .leaflet-control,
+#tool-address-search .leaflet-control,
+#tool-layers-container .leaflet-control {
+    position: static !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    border: none !important;
+    width: 100%;
+}
+
+#tool-address-search .leaflet-photon {
+    width: 100%;
+}
+
+#tool-address-search .leaflet-photon input {
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+#tool-layers-container .leaflet-control-layers {
+    width: 100%;
+    box-shadow: none !important;
+    border: none !important;
+    background: transparent !important;
+}
+
+#tool-layers-container .leaflet-control-layers-list {
+    max-height: 420px !important;
+    overflow-y: auto !important;
+    width: 100%;
+}
+
+#tool-layers-container .leaflet-control-layers-expanded {
+    padding: 0 !important;
+}
+
+#tool-measure-container .leaflet-control-measure {
+    width: 100%;
+}
+
+#tool-measure-container .leaflet-control-measure .leaflet-control-measure-toggle {
+    width: 100%;
+    height: 38px;
+    line-height: 38px;
+    border-radius: 8px;
+    text-align: center;
+    background: #0d5f8f;
+    color: #fff;
+}
+
+/* North Arrow */
+#north-arrow-box {
+    position: fixed;
+    top: 100px;        /* me lart qe mos te konfliktoje me zoom */
+    right: 12px;
+    width: 44px;       /* me i vogel */
+    height: 64px;      /* me i vogel */
+    z-index: 1900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.92);
+    border: 1px solid #d9d9d9;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+}
+
+#north-arrow-box .north-letter {
+    font-size: 15px;
+    font-weight: bold;
+    color: #222;
+    margin-bottom: 2px;
+}
+
+#north-arrow-box .north-arrow {
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    border-bottom: 22px solid #c21807;
+}
+
+#north-arrow-box .north-arrow::after {
+    left: -6px;
+    top: 22px;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 14px solid #1f1f1f;
+}
+
+@media screen and (max-width: 1200px) {
+    #geoportal-sidebar {
+        width: 280px;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    #geoportal-sidebar {
+        width: 250px;
+    }
+}
+</style>
+        <title></title>
+    </head>
+<body>
+
+    <div id="topbar">
+        <div class="topbar-left">
+            <img src="logo_kru.png" alt="Logo KRU Gjakova" class="topbar-logo kru-logo">
+            <div class="topbar-title">
+    <div class="main-title">Infrastruktura e ujësjellësit dhe kanalizimit</div>
+    <div class="sub-title">Kompania Rajonale e Ujësjellësit "GJAKOVA" SH.A.</div>
+</div>
+        </div>
+
+        <div class="topbar-right">
+            <img src="logo_up.png" alt="Logo Universiteti i Prishtinës" class="topbar-logo up-logo">
+            <div class="topbar-university-text">
+    <div class="uni-line-1">UNIVERSITETI I PRISHTINËS</div>
+    <div class="uni-line-2">FAKULTETI I INXHINIERISË SË NDËRTIMIT</div>
+    <div class="uni-line-3">Dega: Gjeodezi</div>
+    <div class="uni-line-3">Lënda: WebGIS</div>
+</div>
+        </div>
+    </div>
+<div id="geoportal-sidebar">
+    <div class="sidebar-header">Paneli i Veglave</div>
+    <div class="sidebar-content">
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Vegla matëse</div>
+            <div class="sidebar-section-body" id="tool-measure-container"></div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Kerko adrese</div>
+            <div class="sidebar-section-body" id="tool-address-search"></div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Kerko permes koordinatave</div>
+            <div class="sidebar-section-body">
+                <input type="text" id="coord-search-input" class="sidebar-input" placeholder="7443210.43 , 4702133.12">
+                <button id="coord-search-btn" class="sidebar-btn">Shko te koordinatat</button>
+                <div class="sidebar-small-note">
+                    Shkruaji koordinatat ne formatin: 7443210.43 , 4702133.12
+                </div>
+                <div id="coord-search-message"></div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Legjenda / Shtresat</div>
+            <div class="sidebar-section-body" id="tool-layers-container"></div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Shkarko te dhena</div>
+            <div class="sidebar-section-body">
+                <button id="download-geojson-btn" class="sidebar-btn secondary">Shkarko GeoJSON</button>
+                <div class="sidebar-small-note">Shkarkohen vetem shtresat aktive ne harte.</div>
+                <div id="download-message"></div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Printo / Ruaj Harten</div>
+            <div class="sidebar-section-body">
+                <select id="print-paper-size" class="sidebar-select">
+                    <option value="A4">A4</option>
+                    <option value="A3">A3</option>
+                </select>
+                <select id="print-orientation" class="sidebar-select">
+                    <option value="portrait">Portrait</option>
+                    <option value="landscape">Landscape</option>
+                </select>
+                <button id="print-map-btn" class="sidebar-btn">Ruaj / Printo harten</button>
+                <div class="sidebar-small-note">
+                    Hap dritaren e printimit ku mund ta ruash edhe si PDF.
+                </div>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <div class="sidebar-section-title">Selekto sipas atributeve</div>
+            <div class="sidebar-section-body">
+                <select id="attribute-layer-select" class="sidebar-select">
+                    <option value="pipes">Gypat e Ujesjellesit</option>
+                </select>
+                <select id="attribute-field-select" class="sidebar-select"></select>
+                <input type="text" id="attribute-value-input" class="sidebar-input" placeholder="p.sh. 50 DN ose 50">
+                <div class="sidebar-row">
+                    <button id="attribute-select-btn" class="sidebar-btn">Selekto</button>
+                    <button id="attribute-reset-btn" class="sidebar-btn secondary">Pastro</button>
+                </div>
+                <div id="attribute-message"></div>
+            </div>
+        </div>
+
+<div class="sidebar-section">
+    <div class="sidebar-section-title">Simbolizo një shtresë</div>
+    <div class="sidebar-section-body">
+        <select id="symbology-layer-select" class="sidebar-select">
+            <option value="water_pipes">Gypat e Ujësjellësit</option>
+        </select>
+
+        <select id="symbology-field-select" class="sidebar-select">
+            <option value="MATERIAL">MATERIAL</option>
+            <option value="DIMENSION">DIMENSION</option>
+        </select>
+
+        <select id="symbology-mode-select" class="sidebar-select">
+            <option value="categorized">Sipas kategorive / ngjyrave</option>
+            <option value="graduated">Sipas trashësisë</option>
+        </select>
+
+        <div class="sidebar-row">
+            <button id="apply-symbology-btn" class="sidebar-btn">Apliko</button>
+            <button id="reset-symbology-btn" class="sidebar-btn secondary">Rikthe</button>
+        </div>
+
+        <div class="sidebar-small-note">
+            Për MATERIAL përdor ngjyra të ndryshme, ndërsa për DIMENSION përdor trashësi të ndryshme.
+        </div>
+
+        <div id="symbology-message"></div>
+        <div id="symbology-legend" class="symbology-legend"></div>
+    </div>
+</div>       
+<div class="sidebar-section">
+            <div class="sidebar-section-title">RAPORTO PROBLEM</div>
+            <div class="sidebar-section-body">
+                <a class="sidebar-link-btn" target="_blank" href="https://docs.google.com/forms/d/e/1FAIpQLSd_r35-_ZLwpnOMPlwI-xWNWI1fo8YbwmfmoqlMrBGM6ii1rQ/viewform?usp=publish-editor">
+                    Hap formularin
+                </a>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="north-arrow-box">
+    <div class="north-letter">N</div>
+    <div class="north-arrow"></div>
+</div>
+
+<div id="map">
+</div>
+
+<div id="bottombar">
+    <div id="bottom-left">Kosovaref01: -</div>
+    <div id="bottom-center">Shkalla: 1:-</div>
+    <div id="bottom-right">
+        <div class="author-badge">
+            <span class="author-symbol">©</span>
+            <span>JETMIR JAHA</span>
+        </div>
+    </div>
+</div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/leaflet-search.js"></script>
+        <script src="data/GypateKanalizimit_2.js"></script>
+        <script src="data/PusetateKanalizimit_3.js"></script>
+        <script src="data/Burimeteujit_4.js"></script>
+        <script src="data/Valvulateajrit_5.js"></script>
+        <script src="data/GypateUjsjellsit_6.js"></script>
+        <script src="data/Hidrantt_7.js"></script>
+        <script src="data/Rezervuart_8.js"></script>
+        <script src="data/StacionetePompimit_9.js"></script>
+        <script src="data/Ujmatsitkryesorzonal_10.js"></script>
+        <script src="data/Valvulat_11.js"></script>
+        <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString' || e.target.feature.geometry.type === 'MultiLineString') {
+              highlightLayer.setStyle({
+                color: 'rgba(255, 255, 0, 1.00)',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: 'rgba(255, 255, 0, 1.00)',
+                fillOpacity: 1
+              });
+            }
+        }
+        var map = L.map('map', {
+            zoomControl:false, maxZoom:28, minZoom:1
+        }).fitBounds([[42.03060397166065,19.572232161178142],[42.932520831449054,21.85144143179621]]);
+        var hash = new L.Hash(map);
+        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        // remove popup's row if "visible-with-data"
+        function removeEmptyRowsFromPopupContent(content, feature) {
+         var tempDiv = document.createElement('div');
+         tempDiv.innerHTML = content;
+         var rows = tempDiv.querySelectorAll('tr');
+         for (var i = 0; i < rows.length; i++) {
+             var td = rows[i].querySelector('td.visible-with-data');
+             var key = td ? td.id : '';
+             if (td && td.classList.contains('visible-with-data') && feature.properties[key] == null) {
+                 rows[i].parentNode.removeChild(rows[i]);
+             }
+         }
+         return tempDiv.innerHTML;
+        }
+        // modify popup if contains media
+        function addClassToPopupIfMedia(content, popup) {
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = content;
+            var imgTd = tempDiv.querySelector('td img');
+            if (imgTd) {
+                var src = imgTd.getAttribute('src');
+                if (/\.(jpg|jpeg|png|gif|bmp|webp|avif)$/i.test(src)) {
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp3|wav|ogg|aac)$/i.test(src)) {
+                    var audio = document.createElement('audio');
+                    audio.controls = true;
+                    audio.src = src;
+                    imgTd.parentNode.replaceChild(audio, imgTd);
+                    popup._contentNode.classList.add('media');
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else if (/\.(mp4|webm|ogg|mov)$/i.test(src)) {
+                    var video = document.createElement('video');
+                    video.controls = true;
+                    video.src = src;
+                    video.style.width = "400px";
+                    video.style.height = "300px";
+                    video.style.maxHeight = "60vh";
+                    video.style.maxWidth = "60vw";
+                    imgTd.parentNode.replaceChild(video, imgTd);
+                    popup._contentNode.classList.add('media');
+                    // Aggiorna il popup quando il video carica i metadati
+                    video.addEventListener('loadedmetadata', function() {
+                        popup.update();
+                    });
+                    setTimeout(function() {
+                        popup.setContent(tempDiv.innerHTML);
+                        popup.update();
+                    }, 10);
+                } else {
+                    popup._contentNode.classList.remove('media');
+                }
+            } else {
+                popup._contentNode.classList.remove('media');
+            }
+        }
+var zoomControl = L.control.zoom({
+    position: 'topright'
+}).addTo(map);
+        var measureControl = new L.Control.Measure({
+            position: 'topleft',
+            primaryLengthUnit: 'meters',
+            secondaryLengthUnit: 'kilometers',
+            primaryAreaUnit: 'sqmeters',
+            secondaryAreaUnit: 'hectares'
+        });
+        measureControl.addTo(map);
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].innerHTML = '';
+        document.getElementsByClassName('leaflet-control-measure-toggle')[0].className += ' fas fa-ruler';
+        var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        map.createPane('pane_OSMStandard_0');
+        map.getPane('pane_OSMStandard_0').style.zIndex = 400;
+        var layer_OSMStandard_0 = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            pane: 'pane_OSMStandard_0',
+            opacity: 1.0,
+            attribution: '<a href="https://www.openstreetmap.org/copyright">© OpenStreetMap contributors, CC-BY-SA</a>',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
+        map.createPane('pane_GoogleSatellite_1');
+        map.getPane('pane_GoogleSatellite_1').style.zIndex = 401;
+        var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_1',
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 19
+        });
+        layer_GoogleSatellite_1;
+        map.addLayer(layer_GoogleSatellite_1);
+        function pop_GypateKanalizimit_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td class="visible-with-data" id="OBJECTID">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Lokacioni</th>\
+                        <td class="visible-with-data" id="Lokacioni">' + (feature.properties['Lokacioni'] !== null ? autolinker.link(String(feature.properties['Lokacioni']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Materiali</th>\
+                        <td class="visible-with-data" id="Materiali">' + (feature.properties['Materiali'] !== null ? autolinker.link(String(feature.properties['Materiali']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Dimensioni</th>\
+                        <td class="visible-with-data" id="Dimensioni">' + (feature.properties['Dimensioni'] !== null ? autolinker.link(String(feature.properties['Dimensioni']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Viti_i_nde</th>\
+                        <td class="visible-with-data" id="Viti_i_nde">' + (feature.properties['Viti_i_nde'] !== null ? autolinker.link(String(feature.properties['Viti_i_nde']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Emri_i_fsh</th>\
+                        <td class="visible-with-data" id="Emri_i_fsh">' + (feature.properties['Emri_i_fsh'] !== null ? autolinker.link(String(feature.properties['Emri_i_fsh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_GypateKanalizimit_2_0() {
+            return {
+                pane: 'pane_GypateKanalizimit_2',
+                opacity: 1,
+                color: 'rgba(142,71,50,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_GypateKanalizimit_2');
+        map.getPane('pane_GypateKanalizimit_2').style.zIndex = 402;
+        map.getPane('pane_GypateKanalizimit_2').style['mix-blend-mode'] = 'normal';
+        var layer_GypateKanalizimit_2 = new L.geoJson(json_GypateKanalizimit_2, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_GypateKanalizimit_2',
+            layerName: 'layer_GypateKanalizimit_2',
+            pane: 'pane_GypateKanalizimit_2',
+            onEachFeature: pop_GypateKanalizimit_2,
+            style: style_GypateKanalizimit_2_0,
+        });
+        bounds_group.addLayer(layer_GypateKanalizimit_2);
+        map.addLayer(layer_GypateKanalizimit_2);
+        function pop_PusetateKanalizimit_3(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td class="visible-with-data" id="OBJECTID">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Z</th>\
+                        <td class="visible-with-data" id="Z">' + (feature.properties['Z'] !== null ? autolinker.link(String(feature.properties['Z']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Th_</th>\
+                        <td class="visible-with-data" id="Th_">' + (feature.properties['Th_'] !== null ? autolinker.link(String(feature.properties['Th_']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Gjendja_e_</th>\
+                        <td class="visible-with-data" id="Gjendja_e_">' + (feature.properties['Gjendja_e_'] !== null ? autolinker.link(String(feature.properties['Gjendja_e_']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Viti_i_nde</th>\
+                        <td class="visible-with-data" id="Viti_i_nde">' + (feature.properties['Viti_i_nde'] !== null ? autolinker.link(String(feature.properties['Viti_i_nde']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Emri_i_fsh</th>\
+                        <td class="visible-with-data" id="Emri_i_fsh">' + (feature.properties['Emri_i_fsh'] !== null ? autolinker.link(String(feature.properties['Emri_i_fsh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_PusetateKanalizimit_3_0() {
+            return {
+                pane: 'pane_PusetateKanalizimit_3',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/PusetateKanalizimit_3.svg',
+            iconSize: [10.639999999999999, 10.639999999999999]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_PusetateKanalizimit_3');
+        map.getPane('pane_PusetateKanalizimit_3').style.zIndex = 403;
+        map.getPane('pane_PusetateKanalizimit_3').style['mix-blend-mode'] = 'normal';
+        var layer_PusetateKanalizimit_3 = new L.geoJson(json_PusetateKanalizimit_3, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_PusetateKanalizimit_3',
+            layerName: 'layer_PusetateKanalizimit_3',
+            pane: 'pane_PusetateKanalizimit_3',
+            onEachFeature: pop_PusetateKanalizimit_3,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_PusetateKanalizimit_3_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_PusetateKanalizimit_3);
+        map.addLayer(layer_PusetateKanalizimit_3);
+        function pop_Burimeteujit_4(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <td colspan="2"><strong>Emri</strong><br />' + (feature.properties['Emri'] !== null ? autolinker.link(String(feature.properties['Emri']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Lloji</th>\
+                        <td class="visible-with-data" id="Lloji">' + (feature.properties['Lloji'] !== null ? autolinker.link(String(feature.properties['Lloji']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Z</th>\
+                        <td class="visible-with-data" id="Z">' + (feature.properties['Z'] !== null ? autolinker.link(String(feature.properties['Z']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kapac_max</th>\
+                        <td class="visible-with-data" id="Kapac_max">' + (feature.properties['Kapac_max'] !== null ? autolinker.link(String(feature.properties['Kapac_max']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kapac_shfr</th>\
+                        <td class="visible-with-data" id="Kapac_shfr">' + (feature.properties['Kapac_shfr'] !== null ? autolinker.link(String(feature.properties['Kapac_shfr']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Lokacioni</th>\
+                        <td class="visible-with-data" id="Lokacioni">' + (feature.properties['Lokacioni'] !== null ? autolinker.link(String(feature.properties['Lokacioni']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Trajtimi</th>\
+                        <td class="visible-with-data" id="Trajtimi">' + (feature.properties['Trajtimi'] !== null ? autolinker.link(String(feature.properties['Trajtimi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Burimeteujit_4_0() {
+            return {
+                pane: 'pane_Burimeteujit_4',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Burimeteujit_4.svg',
+            iconSize: [22.799999999999997, 22.799999999999997]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Burimeteujit_4');
+        map.getPane('pane_Burimeteujit_4').style.zIndex = 404;
+        map.getPane('pane_Burimeteujit_4').style['mix-blend-mode'] = 'normal';
+        var layer_Burimeteujit_4 = new L.geoJson(json_Burimeteujit_4, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Burimeteujit_4',
+            layerName: 'layer_Burimeteujit_4',
+            pane: 'pane_Burimeteujit_4',
+            onEachFeature: pop_Burimeteujit_4,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Burimeteujit_4_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Burimeteujit_4);
+        map.addLayer(layer_Burimeteujit_4);
+        function pop_Valvulateajrit_5(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td class="visible-with-data" id="OBJECTID">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ID</th>\
+                        <td class="visible-with-data" id="ID">' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LOCATION</th>\
+                        <td class="visible-with-data" id="LOCATION">' + (feature.properties['LOCATION'] !== null ? autolinker.link(String(feature.properties['LOCATION']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Emri_i_fsh</th>\
+                        <td class="visible-with-data" id="Emri_i_fsh">' + (feature.properties['Emri_i_fsh'] !== null ? autolinker.link(String(feature.properties['Emri_i_fsh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Valvulateajrit_5_0() {
+            return {
+                pane: 'pane_Valvulateajrit_5',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Valvulateajrit_5.svg',
+            iconSize: [13.68, 13.68]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Valvulateajrit_5');
+        map.getPane('pane_Valvulateajrit_5').style.zIndex = 405;
+        map.getPane('pane_Valvulateajrit_5').style['mix-blend-mode'] = 'normal';
+        var layer_Valvulateajrit_5 = new L.geoJson(json_Valvulateajrit_5, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Valvulateajrit_5',
+            layerName: 'layer_Valvulateajrit_5',
+            pane: 'pane_Valvulateajrit_5',
+            onEachFeature: pop_Valvulateajrit_5,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Valvulateajrit_5_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Valvulateajrit_5);
+        map.addLayer(layer_Valvulateajrit_5);
+        function pop_GypateUjsjellsit_6(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID_1</th>\
+                        <td class="visible-with-data" id="OBJECTID_1">' + (feature.properties['OBJECTID_1'] !== null ? autolinker.link(String(feature.properties['OBJECTID_1']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LOCATION</th>\
+                        <td class="visible-with-data" id="LOCATION">' + (feature.properties['LOCATION'] !== null ? autolinker.link(String(feature.properties['LOCATION']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">DIMENSION</th>\
+                        <td class="visible-with-data" id="DIMENSION">' + (feature.properties['DIMENSION'] !== null ? autolinker.link(String(feature.properties['DIMENSION']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">MATERIAL</th>\
+                        <td class="visible-with-data" id="MATERIAL">' + (feature.properties['MATERIAL'] !== null ? autolinker.link(String(feature.properties['MATERIAL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">CONSTRUCTI</th>\
+                        <td class="visible-with-data" id="CONSTRUCTI">' + (feature.properties['CONSTRUCTI'] !== null ? autolinker.link(String(feature.properties['CONSTRUCTI']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Emri_i_fsh</th>\
+                        <td class="visible-with-data" id="Emri_i_fsh">' + (feature.properties['Emri_i_fsh'] !== null ? autolinker.link(String(feature.properties['Emri_i_fsh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Jetgjatsia</th>\
+                        <td class="visible-with-data" id="Jetgjatsia">' + (feature.properties['Jetgjatsia'] !== null ? autolinker.link(String(feature.properties['Jetgjatsia']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">JetaMbetur</th>\
+                        <td class="visible-with-data" id="JetaMbetur">' + (feature.properties['JetaMbetur'] !== null ? autolinker.link(String(feature.properties['JetaMbetur']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_GypateUjsjellsit_6_0() {
+            return {
+                pane: 'pane_GypateUjsjellsit_6',
+                opacity: 1,
+                color: 'rgba(44,91,246,1.0)',
+                dashArray: '4.0,2.0,1.0,2.0',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true,
+            }
+        }
+        map.createPane('pane_GypateUjsjellsit_6');
+        map.getPane('pane_GypateUjsjellsit_6').style.zIndex = 406;
+        map.getPane('pane_GypateUjsjellsit_6').style['mix-blend-mode'] = 'normal';
+        var layer_GypateUjsjellsit_6 = new L.geoJson(json_GypateUjsjellsit_6, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_GypateUjsjellsit_6',
+            layerName: 'layer_GypateUjsjellsit_6',
+            pane: 'pane_GypateUjsjellsit_6',
+            onEachFeature: pop_GypateUjsjellsit_6,
+            style: style_GypateUjsjellsit_6_0,
+        });
+        bounds_group.addLayer(layer_GypateUjsjellsit_6);
+        map.addLayer(layer_GypateUjsjellsit_6);
+        function pop_Hidrantt_7(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td class="visible-with-data" id="OBJECTID">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ID</th>\
+                        <td class="visible-with-data" id="ID">' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LOCATION</th>\
+                        <td class="visible-with-data" id="LOCATION">' + (feature.properties['LOCATION'] !== null ? autolinker.link(String(feature.properties['LOCATION']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Hidrantt_7_0() {
+            return {
+                pane: 'pane_Hidrantt_7',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Hidrantt_7.svg',
+            iconSize: [13.68, 13.68]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Hidrantt_7');
+        map.getPane('pane_Hidrantt_7').style.zIndex = 407;
+        map.getPane('pane_Hidrantt_7').style['mix-blend-mode'] = 'normal';
+        var layer_Hidrantt_7 = new L.geoJson(json_Hidrantt_7, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Hidrantt_7',
+            layerName: 'layer_Hidrantt_7',
+            pane: 'pane_Hidrantt_7',
+            onEachFeature: pop_Hidrantt_7,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Hidrantt_7_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Hidrantt_7);
+        map.addLayer(layer_Hidrantt_7);
+        function pop_Rezervuart_8(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Lokacioni</th>\
+                        <td class="visible-with-data" id="Lokacioni">' + (feature.properties['Lokacioni'] !== null ? autolinker.link(String(feature.properties['Lokacioni']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Vëllimi</th>\
+                        <td class="visible-with-data" id="Vëllimi">' + (feature.properties['Vëllimi'] !== null ? autolinker.link(String(feature.properties['Vëllimi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Viti_i_nd</th>\
+                        <td class="visible-with-data" id="Viti_i_nd">' + (feature.properties['Viti_i_nd'] !== null ? autolinker.link(String(feature.properties['Viti_i_nd']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Z</th>\
+                        <td class="visible-with-data" id="Z">' + (feature.properties['Z'] !== null ? autolinker.link(String(feature.properties['Z']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Emertimi</strong><br />' + (feature.properties['Emertimi'] !== null ? autolinker.link(String(feature.properties['Emertimi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Rezervuart_8_0() {
+            return {
+                pane: 'pane_Rezervuart_8',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Rezervuart_8.svg',
+            iconSize: [16.72, 16.72]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Rezervuart_8');
+        map.getPane('pane_Rezervuart_8').style.zIndex = 408;
+        map.getPane('pane_Rezervuart_8').style['mix-blend-mode'] = 'normal';
+        var layer_Rezervuart_8 = new L.geoJson(json_Rezervuart_8, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Rezervuart_8',
+            layerName: 'layer_Rezervuart_8',
+            pane: 'pane_Rezervuart_8',
+            onEachFeature: pop_Rezervuart_8,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Rezervuart_8_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Rezervuart_8);
+        map.addLayer(layer_Rezervuart_8);
+        function pop_StacionetePompimit_9(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">Lokacioni</th>\
+                        <td class="visible-with-data" id="Lokacioni">' + (feature.properties['Lokacioni'] !== null ? autolinker.link(String(feature.properties['Lokacioni']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Kapaciteti</th>\
+                        <td class="visible-with-data" id="Kapaciteti">' + (feature.properties['Kapaciteti'] !== null ? autolinker.link(String(feature.properties['Kapaciteti']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Nr_i_pompa</th>\
+                        <td class="visible-with-data" id="Nr_i_pompa">' + (feature.properties['Nr_i_pompa'] !== null ? autolinker.link(String(feature.properties['Nr_i_pompa']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Fuçia_ins</th>\
+                        <td class="visible-with-data" id="Fuçia_ins">' + (feature.properties['Fuçia_ins'] !== null ? autolinker.link(String(feature.properties['Fuçia_ins']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Viti_i_nde</th>\
+                        <td class="visible-with-data" id="Viti_i_nde">' + (feature.properties['Viti_i_nde'] !== null ? autolinker.link(String(feature.properties['Viti_i_nde']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Z</th>\
+                        <td class="visible-with-data" id="Z">' + (feature.properties['Z'] !== null ? autolinker.link(String(feature.properties['Z']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2"><strong>Emertimi</strong><br />' + (feature.properties['Emertimi'] !== null ? autolinker.link(String(feature.properties['Emertimi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_StacionetePompimit_9_0() {
+            return {
+                pane: 'pane_StacionetePompimit_9',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/StacionetePompimit_9.svg',
+            iconSize: [19.759999999999998, 19.759999999999998]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_StacionetePompimit_9');
+        map.getPane('pane_StacionetePompimit_9').style.zIndex = 409;
+        map.getPane('pane_StacionetePompimit_9').style['mix-blend-mode'] = 'normal';
+        var layer_StacionetePompimit_9 = new L.geoJson(json_StacionetePompimit_9, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_StacionetePompimit_9',
+            layerName: 'layer_StacionetePompimit_9',
+            pane: 'pane_StacionetePompimit_9',
+            onEachFeature: pop_StacionetePompimit_9,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_StacionetePompimit_9_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_StacionetePompimit_9);
+        map.addLayer(layer_StacionetePompimit_9);
+        function pop_Ujmatsitkryesorzonal_10(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td class="visible-with-data" id="OBJECTID">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ID</th>\
+                        <td class="visible-with-data" id="ID">' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Lokacioni</th>\
+                        <td class="visible-with-data" id="Lokacioni">' + (feature.properties['Lokacioni'] !== null ? autolinker.link(String(feature.properties['Lokacioni']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Pozita</th>\
+                        <td class="visible-with-data" id="Pozita">' + (feature.properties['Pozita'] !== null ? autolinker.link(String(feature.properties['Pozita']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Zona</th>\
+                        <td class="visible-with-data" id="Zona">' + (feature.properties['Zona'] !== null ? autolinker.link(String(feature.properties['Zona']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Komuna</th>\
+                        <td class="visible-with-data" id="Komuna">' + (feature.properties['Komuna'] !== null ? autolinker.link(String(feature.properties['Komuna']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Diametri_</th>\
+                        <td class="visible-with-data" id="Diametri_">' + (feature.properties['Diametri_'] !== null ? autolinker.link(String(feature.properties['Diametri_']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Ujmatsitkryesorzonal_10_0() {
+            return {
+                pane: 'pane_Ujmatsitkryesorzonal_10',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Ujmatsitkryesorzonal_10.svg',
+            iconSize: [13.68, 13.68]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Ujmatsitkryesorzonal_10');
+        map.getPane('pane_Ujmatsitkryesorzonal_10').style.zIndex = 410;
+        map.getPane('pane_Ujmatsitkryesorzonal_10').style['mix-blend-mode'] = 'normal';
+        var layer_Ujmatsitkryesorzonal_10 = new L.geoJson(json_Ujmatsitkryesorzonal_10, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Ujmatsitkryesorzonal_10',
+            layerName: 'layer_Ujmatsitkryesorzonal_10',
+            pane: 'pane_Ujmatsitkryesorzonal_10',
+            onEachFeature: pop_Ujmatsitkryesorzonal_10,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Ujmatsitkryesorzonal_10_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Ujmatsitkryesorzonal_10);
+        map.addLayer(layer_Ujmatsitkryesorzonal_10);
+        function pop_Valvulat_11(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
+            var popupContent = '<table>\
+                    <tr>\
+                        <th scope="row">OBJECTID</th>\
+                        <td class="visible-with-data" id="OBJECTID">' + (feature.properties['OBJECTID'] !== null ? autolinker.link(String(feature.properties['OBJECTID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">ID</th>\
+                        <td class="visible-with-data" id="ID">' + (feature.properties['ID'] !== null ? autolinker.link(String(feature.properties['ID']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">LOCATION</th>\
+                        <td class="visible-with-data" id="LOCATION">' + (feature.properties['LOCATION'] !== null ? autolinker.link(String(feature.properties['LOCATION']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <th scope="row">Emri_i_fsh</th>\
+                        <td class="visible-with-data" id="Emri_i_fsh">' + (feature.properties['Emri_i_fsh'] !== null ? autolinker.link(String(feature.properties['Emri_i_fsh']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['raporto'] !== null ? autolinker.link(String(feature.properties['raporto']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                </table>';
+            var content = removeEmptyRowsFromPopupContent(popupContent, feature);
+			layer.on('popupopen', function(e) {
+				addClassToPopupIfMedia(content, e.popup);
+			});
+			layer.bindPopup(content, { maxHeight: 400 });
+        }
+
+        function style_Valvulat_11_0() {
+            return {
+                pane: 'pane_Valvulat_11',
+        rotationAngle: 0.0,
+        rotationOrigin: 'center center',
+        icon: L.icon({
+            iconUrl: 'markers/Valvulat_11.svg',
+            iconSize: [14.566654, 14.566654]
+        }),
+                interactive: true,
+            }
+        }
+        map.createPane('pane_Valvulat_11');
+        map.getPane('pane_Valvulat_11').style.zIndex = 411;
+        map.getPane('pane_Valvulat_11').style['mix-blend-mode'] = 'normal';
+        var layer_Valvulat_11 = new L.geoJson(json_Valvulat_11, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_Valvulat_11',
+            layerName: 'layer_Valvulat_11',
+            pane: 'pane_Valvulat_11',
+            onEachFeature: pop_Valvulat_11,
+            pointToLayer: function (feature, latlng) {
+                var context = {
+                    feature: feature,
+                    variables: {}
+                };
+                return L.marker(latlng, style_Valvulat_11_0(feature));
+            },
+        });
+        bounds_group.addLayer(layer_Valvulat_11);
+        map.addLayer(layer_Valvulat_11);
+        map.on("zoomend", function(e) {
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_PusetateKanalizimit_3);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_PusetateKanalizimit_3);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 8) {
+                map.addLayer(layer_Burimeteujit_4);
+            } else if (map.getZoom() > 19 || map.getZoom() < 8) {
+                map.removeLayer(layer_Burimeteujit_4);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_Valvulateajrit_5);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_Valvulateajrit_5);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_Hidrantt_7);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_Hidrantt_7);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
+                map.addLayer(layer_Rezervuart_8);
+            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
+                map.removeLayer(layer_Rezervuart_8);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
+                map.addLayer(layer_StacionetePompimit_9);
+            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
+                map.removeLayer(layer_StacionetePompimit_9);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 14) {
+                map.addLayer(layer_Ujmatsitkryesorzonal_10);
+            } else if (map.getZoom() > 19 || map.getZoom() < 14) {
+                map.removeLayer(layer_Ujmatsitkryesorzonal_10);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_Valvulat_11);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_Valvulat_11);
+            }
+        });
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_PusetateKanalizimit_3);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_PusetateKanalizimit_3);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 8) {
+                map.addLayer(layer_Burimeteujit_4);
+            } else if (map.getZoom() > 19 || map.getZoom() < 8) {
+                map.removeLayer(layer_Burimeteujit_4);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_Valvulateajrit_5);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_Valvulateajrit_5);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_Hidrantt_7);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_Hidrantt_7);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
+                map.addLayer(layer_Rezervuart_8);
+            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
+                map.removeLayer(layer_Rezervuart_8);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
+                map.addLayer(layer_StacionetePompimit_9);
+            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
+                map.removeLayer(layer_StacionetePompimit_9);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 14) {
+                map.addLayer(layer_Ujmatsitkryesorzonal_10);
+            } else if (map.getZoom() > 19 || map.getZoom() < 14) {
+                map.removeLayer(layer_Ujmatsitkryesorzonal_10);
+            }
+            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
+                map.addLayer(layer_Valvulat_11);
+            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
+                map.removeLayer(layer_Valvulat_11);
+            }
+        const url = {"Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
+        "France BAN": "https://api-adresse.data.gouv.fr/search/?"}
+        var photonControl = L.control.photon({
+            url: url["Nominatim OSM"],
+            feedbackLabel: '',
+            position: 'topleft',
+            includePosition: true,
+            initial: true,
+            // resultsHandler: myHandler,
+        }).addTo(map);
+        photonControl._container.childNodes[0].style.borderRadius="10px"
+        // Create a variable to store the geoJSON data
+        var x = null;
+        // Create a variable to store the marker
+        var marker = null;
+        // Add an event listener to the Photon control to create a marker from the returned geoJSON data
+        var z = null;
+        photonControl.on('selected', function(e) {
+            console.log(photonControl.search.resultsContainer);
+            if (x != null) {
+                map.removeLayer(obj3.marker);
+                map.removeLayer(x);
+            }
+            obj2.gcd = e.choice;
+            x = L.geoJSON(obj2.gcd).addTo(map);
+            var label = typeof obj2.gcd.properties.label === 'undefined' ? obj2.gcd.properties.display_name : obj2.gcd.properties.label;
+            obj3.marker = L.marker(x.getLayers()[0].getLatLng()).bindPopup(label).addTo(map);
+            map.setView(x.getLayers()[0].getLatLng(), 17);
+            z = typeof e.choice.properties.label === 'undefined'? e.choice.properties.display_name : e.choice.properties.label;
+            console.log(e);
+            e.target.input.value = z;
+        });
+        var search = document.getElementsByClassName("leaflet-photon leaflet-control")[0];
+        search.classList.add("leaflet-control-search")
+        search.style.display = "flex";
+        search.style.backgroundColor="rgba(255,255,255,0.5)" 
+
+        // Create the new button element
+        var button = document.createElement("div");
+        button.id = "gcd-button-control";
+        button.className = "gcd-gl-btn fa fa-search search-button";
+
+        // Insert the button at the beginning of the search control
+        search.insertBefore(button, search.firstChild);
+        last = search.lastChild;
+        last.style.display = "none";
+        button.addEventListener("click", function (e) {
+            if (last.style.display === "none") {
+                last.style.display = "block";
+            } else {
+                last.style.display = "none";
+            }
+        });
+        var overlaysTree = [
+        {label: '<b>Infrastruktura e ujesjellesit</b>',  selectAllCheckbox: true, children: [
+            {label: '<img src="legend/Valvulat_11.png" /> Valvulat', layer: layer_Valvulat_11},
+            {label: '<img src="legend/Ujmatsitkryesorzonal_10.png" /> Ujëmatësit kryesor zonal', layer: layer_Ujmatsitkryesorzonal_10},
+            {label: '<img src="legend/StacionetePompimit_9.png" /> Stacionet e Pompimit', layer: layer_StacionetePompimit_9},
+            {label: '<img src="legend/Rezervuart_8.png" /> Rezervuarët', layer: layer_Rezervuart_8},
+            {label: '<img src="legend/Hidrantt_7.png" /> Hidrantët', layer: layer_Hidrantt_7},
+            {label: '<img src="legend/GypateUjsjellsit_6.png" /> Gypat e Ujësjellësit', layer: layer_GypateUjsjellsit_6},
+            {label: '<img src="legend/Valvulateajrit_5.png" /> Valvulat e ajrit', layer: layer_Valvulateajrit_5},
+            {label: '<img src="legend/Burimeteujit_4.png" /> Burimet e ujit', layer: layer_Burimeteujit_4},]},
+        {label: '<b>Infrastruktura e kanalizimit</b>',  selectAllCheckbox: true, children: [
+            {label: '<img src="legend/PusetateKanalizimit_3.png" /> Pusetat e Kanalizimit', layer: layer_PusetateKanalizimit_3},
+            {label: '<img src="legend/GypateKanalizimit_2.png" /> Gypat e Kanalizimit', layer: layer_GypateKanalizimit_2},]},
+            {label: "Google Satellite", layer: layer_GoogleSatellite_1},
+            {label: "OSM Standard", layer: layer_OSMStandard_0},]
+        var lay = L.control.layers.tree(null, overlaysTree,{
+            //namedToggle: true,
+            //selectorBack: false,
+            //closedSymbol: '&#8862; &#x1f5c0;',
+            //openedSymbol: '&#8863; &#x1f5c1;',
+            //collapseAll: 'Collapse all',
+            //expandAll: 'Expand all',
+            collapsed: false, 
+        });
+        lay.addTo(map);
+		document.addEventListener("DOMContentLoaded", function() {
+            // set new Layers List height which considers toggle icon
+            function newLayersListHeight() {
+                var layerScrollbarElement = document.querySelector('.leaflet-control-layers-scrollbar');
+                if (layerScrollbarElement) {
+                    var layersListElement = document.querySelector('.leaflet-control-layers-list');
+                    var originalHeight = layersListElement.style.height 
+                        || window.getComputedStyle(layersListElement).height;
+                    var newHeight = parseFloat(originalHeight) - 50;
+                    layersListElement.style.height = newHeight + 'px';
+                }
+            }
+            var isLayersListExpanded = true;
+            var controlLayersElement = document.querySelector('.leaflet-control-layers');
+            var toggleLayerControl = document.querySelector('.leaflet-control-layers-toggle');
+            // toggle Collapsed/Expanded and apply new Layers List height
+            toggleLayerControl.addEventListener('click', function() {
+                if (isLayersListExpanded) {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                } else {
+                    controlLayersElement.classList.add('leaflet-control-layers-expanded');
+                }
+                isLayersListExpanded = !isLayersListExpanded;
+                newLayersListHeight()
+            });	
+			// apply new Layers List height if toggle layerstree
+			if (controlLayersElement) {
+				controlLayersElement.addEventListener('click', function(event) {
+					var toggleLayerHeaderPointer = event.target.closest('.leaflet-layerstree-header-pointer span');
+					if (toggleLayerHeaderPointer) {
+						newLayersListHeight();
+					}
+				});
+			}
+            // Collapsed/Expanded at Start to apply new height
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            setTimeout(function() {
+                toggleLayerControl.click();
+            }, 10);
+            // Collapsed touch/small screen
+            var isSmallScreen = window.innerWidth < 650;
+            if (isSmallScreen) {
+                setTimeout(function() {
+                    controlLayersElement.classList.remove('leaflet-control-layers-expanded');
+                    isLayersListExpanded = !isLayersListExpanded;
+                }, 500);
+            }  
+        });       
+        map.on("zoomend", function(){
+
+                if (map.hasLayer(layer_GypateKanalizimit_2)) {
+                    if (map.getZoom() <= 19 && map.getZoom() >= 19) {
+                        layer_GypateKanalizimit_2.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_GypateKanalizimit_2.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_Burimeteujit_4)) {
+                    if (map.getZoom() <= 9 && map.getZoom() >= 19) {
+                        layer_Burimeteujit_4.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_Burimeteujit_4.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_GypateUjsjellsit_6)) {
+                    if (map.getZoom() <= 18 && map.getZoom() >= 19) {
+                        layer_GypateUjsjellsit_6.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_GypateUjsjellsit_6.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_Rezervuart_8)) {
+                    if (map.getZoom() <= 13 && map.getZoom() >= 19) {
+                        layer_Rezervuart_8.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_Rezervuart_8.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_StacionetePompimit_9)) {
+                    if (map.getZoom() <= 13 && map.getZoom() >= 19) {
+                        layer_StacionetePompimit_9.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_StacionetePompimit_9.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        });
+        setBounds();
+        var i = 0;
+        layer_GypateKanalizimit_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((exp_label_GypateKanalizimit_2_eval_expression(context) !== null?String('<div style="color: #5a3b3b; font-size: 5pt; font-family: \'Open Sans\', sans-serif;">' + exp_label_GypateKanalizimit_2_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_GypateKanalizimit_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_Burimeteujit_4.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Emri'] !== null?String('<div style="color: #323232; font-size: 5pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Emri']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Burimeteujit_4'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_GypateUjsjellsit_6.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((exp_label_GypateUjsjellsit_6_eval_expression(context) !== null?String('<div style="color: #0014ae; font-size: 5pt; font-family: \'Open Sans\', sans-serif;">' + exp_label_GypateUjsjellsit_6_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_GypateUjsjellsit_6'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_Rezervuart_8.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Lokacioni'] !== null?String('<div style="color: #323232; font-size: 5pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Lokacioni']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Rezervuart_8'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        var i = 0;
+        layer_StacionetePompimit_9.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['Emertimi'] !== null?String('<div style="color: #323232; font-size: 5pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Emertimi']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_StacionetePompimit_9'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+                if (map.hasLayer(layer_GypateKanalizimit_2)) {
+                    if (map.getZoom() <= 19 && map.getZoom() >= 19) {
+                        layer_GypateKanalizimit_2.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_GypateKanalizimit_2.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_Burimeteujit_4)) {
+                    if (map.getZoom() <= 9 && map.getZoom() >= 19) {
+                        layer_Burimeteujit_4.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_Burimeteujit_4.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_GypateUjsjellsit_6)) {
+                    if (map.getZoom() <= 18 && map.getZoom() >= 19) {
+                        layer_GypateUjsjellsit_6.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_GypateUjsjellsit_6.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_Rezervuart_8)) {
+                    if (map.getZoom() <= 13 && map.getZoom() >= 19) {
+                        layer_Rezervuart_8.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_Rezervuart_8.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+                if (map.hasLayer(layer_StacionetePompimit_9)) {
+                    if (map.getZoom() <= 13 && map.getZoom() >= 19) {
+                        layer_StacionetePompimit_9.eachLayer(function (layer) {
+                            layer.openTooltip();
+                        });
+                    } else {
+                        layer_StacionetePompimit_9.eachLayer(function (layer) {
+                            layer.closeTooltip();
+                        });
+                    }
+                }
+        map.addControl(new L.Control.Search({
+            layer: layer_Rezervuart_8,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'Emertimi'}));
+        if (typeof url === 'undefined') {
+            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
+        } else {
+            document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
+        }
+        resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+        map.on("zoomend", function(){
+            resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+        });
+        </script>        
+</script>  <script>
+
+// ===============================
+// FOOTER FINAL
+// ===============================
+
+if (typeof proj4 !== "undefined") {
+    proj4.defs(
+        "KOSOVAREF01",
+        "+proj=tmerc +lat_0=0 +lon_0=21 +k=0.9999 +x_0=7500000 +y_0=0 +ellps=GRS80 +units=m +no_defs"
+    );
+}
+
+function updateScaleDisplayFinal() {
+    try {
+        var centerY = map.getSize().y / 2;
+        var p1 = map.containerPointToLatLng([0, centerY]);
+        var p2 = map.containerPointToLatLng([100, centerY]);
+
+        var meters = p1.distanceTo(p2);
+        var metersPerPixel = meters / 100;
+
+        var scale = Math.round(metersPerPixel * 96 / 0.0254);
+
+        document.getElementById("bottom-center").innerHTML =
+            "Shkalla: 1:" + scale.toLocaleString();
+
+    } catch (e) {
+        document.getElementById("bottom-center").innerHTML = "Shkalla: -";
+    }
+}
+
+function updateCoordsFinal(e) {
+
+    try {
+
+        var projected = proj4("EPSG:4326", "KOSOVAREF01", [e.latlng.lng, e.latlng.lat]);
+
+        var projX = Number(projected[0]).toFixed(2);
+        var projY = Number(projected[1]).toFixed(2);
+
+        document.getElementById("bottom-left").innerHTML =
+            "Kosovaref01: X = " + projY + " | Y = " + projX;
+
+    } catch (e) {
+
+        document.getElementById("bottom-left").innerHTML =
+            "Kosovaref01: -";
+
+    }
+
+}
+
+window.addEventListener("load", function () {
+
+    setTimeout(function () {
+        updateScaleDisplayFinal();
+    }, 400);
+
+    map.on("zoomend", updateScaleDisplayFinal);
+    map.on("mousemove", updateCoordsFinal);
+
+});
+
+</script> <script>
+(function () {
+
+    function moveLeafletControlsToSidebar() {
+        try {
+            var measureEl = document.querySelector(".leaflet-control-measure");
+            if (measureEl) {
+                document.getElementById("tool-measure-container").appendChild(measureEl);
+            }
+        } catch (e) {}
+
+        try {
+            var searchEl = document.querySelector(".leaflet-photon.leaflet-control");
+            if (searchEl) {
+                document.getElementById("tool-address-search").appendChild(searchEl);
+                var photonInputWrap = searchEl.lastChild;
+                if (photonInputWrap) photonInputWrap.style.display = "block";
+            }
+        } catch (e) {}
+
+        try {
+            var layersEl = document.querySelector(".leaflet-control-layers");
+            if (layersEl) {
+                document.getElementById("tool-layers-container").appendChild(layersEl);
+                layersEl.classList.add("leaflet-control-layers-expanded");
+            }
+        } catch (e) {}
+    }
+
+    function goToKosovarefCoordinates() {
+        var input = document.getElementById("coord-search-input");
+        var msg = document.getElementById("coord-search-message");
+        msg.innerHTML = "";
+
+        try {
+            var raw = input.value.trim();
+            var parts = raw.split(",");
+
+            if (parts.length !== 2) {
+                msg.innerHTML = '<div class="sidebar-error">Formati duhet te jete: 7443210.43 , 4702133.12</div>';
+                return;
+            }
+
+            var firstVal = parseFloat(parts[0].trim());
+            var secondVal = parseFloat(parts[1].trim());
+
+            if (isNaN(firstVal) || isNaN(secondVal)) {
+                msg.innerHTML = '<div class="sidebar-error">Koordinatat nuk jane valide.</div>';
+                return;
+            }
+
+            var lonlat = proj4("KOSOVAREF01", "EPSG:4326", [firstVal, secondVal]);
+            var lon = lonlat[0];
+            var lat = lonlat[1];
+
+            if (window.coordSearchMarker) {
+                map.removeLayer(window.coordSearchMarker);
+            }
+
+            window.coordSearchMarker = L.marker([lat, lon]).addTo(map)
+                .bindPopup("Koordinata e kerkuar").openPopup();
+
+            map.setView([lat, lon], 19);
+
+            msg.innerHTML = '<div class="sidebar-success">Pozicioni u gjet me sukses.</div>';
+        } catch (e) {
+            msg.innerHTML = '<div class="sidebar-error">Gabim gjate kerkimit te koordinatave.</div>';
+        }
+    }
+
+    function downloadVisibleGeoJSON() {
+        var msg = document.getElementById("download-message");
+        msg.innerHTML = "";
+
+        try {
+            var exportLayers = [
+                { name: "GypateKanalizimit", layer: layer_GypateKanalizimit_2 },
+                { name: "PusetateKanalizimit", layer: layer_PusetateKanalizimit_3 },
+                { name: "Burimeteujit", layer: layer_Burimeteujit_4 },
+                { name: "Valvulateajrit", layer: layer_Valvulateajrit_5 },
+                { name: "GypateUjsjellsit", layer: layer_GypateUjsjellsit_6 },
+                { name: "Hidrantt", layer: layer_Hidrantt_7 },
+                { name: "Rezervuart", layer: layer_Rezervuart_8 },
+                { name: "StacionetePompimit", layer: layer_StacionetePompimit_9 },
+                { name: "Ujmatsitkryesorzonal", layer: layer_Ujmatsitkryesorzonal_10 },
+                { name: "Valvulat", layer: layer_Valvulat_11 }
+            ];
+
+            var finalExport = {
+                type: "FeatureCollection",
+                features: []
+            };
+
+            exportLayers.forEach(function(item) {
+                if (map.hasLayer(item.layer)) {
+                    var gj = item.layer.toGeoJSON();
+                    if (gj && gj.features) {
+                        gj.features.forEach(function(f) {
+                            f.properties = f.properties || {};
+                            f.properties._layer_name = item.name;
+                            finalExport.features.push(f);
+                        });
+                    }
+                }
+            });
+
+            if (finalExport.features.length === 0) {
+                msg.innerHTML = '<div class="sidebar-error">Nuk ka shtresa aktive per shkarkim.</div>';
+                return;
+            }
+
+            var blob = new Blob([JSON.stringify(finalExport, null, 2)], { type: "application/geo+json" });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement("a");
+            a.href = url;
+            a.download = "te_dhenat_aktive.geojson";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            msg.innerHTML = '<div class="sidebar-success">GeoJSON u shkarkua me sukses.</div>';
+        } catch (e) {
+            msg.innerHTML = '<div class="sidebar-error">Gabim gjate shkarkimit te GeoJSON.</div>';
+        }
+    }
+
+    function printMapPortal() {
+        try {
+            var paper = document.getElementById("print-paper-size").value;
+            var orientation = document.getElementById("print-orientation").value;
+
+            var oldStyle = document.getElementById("dynamic-print-style");
+            if (oldStyle) oldStyle.remove();
+
+            var style = document.createElement("style");
+            style.id = "dynamic-print-style";
+            style.innerHTML = `
+                @media print {
+                    @page {
+                        size: ${paper} ${orientation};
+                        margin: 10mm;
+                    }
+
+                    #geoportal-sidebar,
+                    #north-arrow-box,
+                    #bottombar {
+                        display: none !important;
+                    }
+
+                    #topbar {
+                        position: static !important;
+                        width: 100% !important;
+                        height: auto !important;
+                    }
+
+                    #map {
+                        position: static !important;
+                        width: 100% !important;
+                        height: 85vh !important;
+                        top: 0 !important;
+                        left: 0 !important;
+                    }
+
+                    .leaflet-top,
+                    .leaflet-right,
+                    .leaflet-left,
+                    .leaflet-bottom {
+                        display: none !important;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+
+            setTimeout(function () {
+                window.print();
+            }, 200);
+        } catch (e) {
+            alert("Gabim gjate printimit te hartes.");
+        }
+    }
+
+    function populateAttributeFields() {
+        var fieldSelect = document.getElementById("attribute-field-select");
+        fieldSelect.innerHTML = "";
+
+        try {
+            var firstLayer = null;
+            layer_GypateUjsjellsit_6.eachLayer(function(lyr) {
+                if (!firstLayer) firstLayer = lyr;
+            });
+
+            var props = Object.keys(firstLayer.feature.properties);
+            props.forEach(function(key) {
+                var opt = document.createElement("option");
+                opt.value = key;
+                opt.textContent = key;
+                fieldSelect.appendChild(opt);
+            });
+
+            if (props.indexOf("DIMENSION") !== -1) {
+                fieldSelect.value = "DIMENSION";
+            }
+        } catch (e) {
+            fieldSelect.innerHTML = '<option value="DIMENSION">DIMENSION</option>';
+        }
+    }
+
+    function selectByAttribute() {
+        var field = document.getElementById("attribute-field-select").value;
+        var value = document.getElementById("attribute-value-input").value.trim().toLowerCase();
+        var msg = document.getElementById("attribute-message");
+        msg.innerHTML = "";
+
+        if (!value) {
+            msg.innerHTML = '<div class="sidebar-error">Shkruaj nje vlere per selektim.</div>';
+            return;
+        }
+
+        var count = 0;
+        var selectedLayers = [];
+
+        layer_GypateUjsjellsit_6.eachLayer(function(lyr) {
+            var props = lyr.feature.properties || {};
+            var attrVal = props[field];
+            var match = false;
+
+            if (attrVal !== null && attrVal !== undefined) {
+                var attrText = String(attrVal).toLowerCase().trim();
+                if (attrText === value || attrText.indexOf(value) !== -1) {
+                    match = true;
+                }
+            }
+
+            if (match) {
+                count++;
+                selectedLayers.push(lyr);
+                lyr.setStyle({
+                    color: "#ff0000",
+                    weight: 4,
+                    opacity: 1
+                });
+            } else {
+                lyr.setStyle({
+                    color: "rgba(44,91,246,1.0)",
+                    dashArray: "4.0,2.0,1.0,2.0",
+                    lineCap: "square",
+                    lineJoin: "bevel",
+                    weight: 1.0,
+                    fillOpacity: 0,
+                    interactive: true
+                });
+            }
+        });
+
+        if (count === 0) {
+            msg.innerHTML = '<div class="sidebar-error">Nuk u gjet asnje element.</div>';
+            return;
+        }
+
+        var fg = L.featureGroup(selectedLayers);
+        map.fitBounds(fg.getBounds(), { padding: [20, 20] });
+
+        msg.innerHTML = '<div class="sidebar-success">U gjeten ' + count + ' element(e).</div>';
+    }
+
+    function resetAttributeSelection() {
+        var msg = document.getElementById("attribute-message");
+        msg.innerHTML = "";
+
+        layer_GypateUjsjellsit_6.eachLayer(function(lyr) {
+            lyr.setStyle({
+                color: "rgba(44,91,246,1.0)",
+                dashArray: "4.0,2.0,1.0,2.0",
+                lineCap: "square",
+                lineJoin: "bevel",
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true
+            });
+        });
+
+        document.getElementById("attribute-value-input").value = "";
+    }
+
+
+function parseDimensionValue(rawValue) {
+    if (rawValue === null || rawValue === undefined) return null;
+
+    var txt = String(rawValue).replace(",", ".").toUpperCase();
+
+    // Merr numrin e parë që gjen, p.sh. DN 80 -> 80
+    var match = txt.match(/(\d+(\.\d+)?)/);
+    if (!match) return null;
+
+    return parseFloat(match[1]);
+}
+
+
+
+
+
+
+  
+function getRandomColorByCategory(value) {
+    var colorMap = {
+        "PVC": "#1f78b4",
+        "PE": "#33a02c",
+        "HDPE": "#33a02c",
+        "GRP": "#17becf",
+        "AC": "#6a3d9a",
+        "ÇELIK": "#e31a1c",
+        "CELIK": "#e31a1c",
+        "STEEL": "#e31a1c",
+        "GIZE": "#ff7f00",
+        "GIZË": "#ff7f00",
+        "DUCTILE IRON": "#ff7f00",
+        "DI": "#ff7f00",
+        "CAST IRON": "#b15928",
+        "UNKNOWN": "#999999",
+        "TJETER": "#666666",
+        "TJETËR": "#666666"
+    };
+
+    var v = String(value || "").trim().toUpperCase();
+
+    for (var key in colorMap) {
+        if (v.indexOf(key) !== -1) return colorMap[key];
+    }
+
+    return "#666666";
+}
+
+
+function getWeightFromDimension(val) {
+    if (val === null || isNaN(val)) return 2;
+    if (val <= 50) return 2;
+    if (val <= 80) return 4;
+    if (val <= 150) return 6;
+    if (val <= 300) return 8;
+    return 11;
+}
+
+function renderCategorizedLegend(field) {
+    var legend = document.getElementById("symbology-legend");
+
+    var items = [
+        { label: "PVC", color: "#1f78b4" },
+        { label: "PE / HDPE", color: "#33a02c" },
+        { label: "GRP", color: "#17becf" },
+        { label: "AC", color: "#6a3d9a" },
+        { label: "Çelik / Steel", color: "#e31a1c" },
+        { label: "Gizë / Ductile Iron / DI", color: "#ff7f00" },
+        { label: "Cast Iron", color: "#b15928" },
+        { label: "Të panjohura / tjera", color: "#666666" }
+    ];
+
+    var html = '<div class="symbology-legend-title">Legjenda e simbolizimit (' + field + ')</div>';
+
+    items.forEach(function(item) {
+        html += `
+            <div class="symbology-legend-item">
+                <span class="symbology-legend-color" style="background:${item.color};"></span>
+                <span>${item.label}</span>
+            </div>
+        `;
+    });
+
+    legend.innerHTML = html;
+    legend.style.display = "block";
+}
+
+function renderGraduatedLegend(field) {
+    var legend = document.getElementById("symbology-legend");
+
+    var items = [
+        { label: "DN 0 – 50", weight: 2 },
+        { label: "DN 51 – 80", weight: 4 },
+        { label: "DN 81 – 150", weight: 6 },
+        { label: "DN 151 – 300", weight: 8 },
+        { label: "DN > 300", weight: 11 }
+    ];
+
+    var html = '<div class="symbology-legend-title">Legjenda e simbolizimit (' + field + ')</div>';
+
+    items.forEach(function(item) {
+        html += `
+            <div class="symbology-legend-item">
+                <span class="symbology-legend-line" style="height:${item.weight}px;"></span>
+                <span>${item.label}</span>
+            </div>
+        `;
+    });
+
+    legend.innerHTML = html;
+    legend.style.display = "block";
+}
+
+function clearSymbologyLegend() {
+    var legend = document.getElementById("symbology-legend");
+    legend.innerHTML = "";
+    legend.style.display = "none";
+}
+
+function applyLayerSymbology() {
+    var field = document.getElementById("symbology-field-select").value;
+    var mode = document.getElementById("symbology-mode-select").value;
+    var msg = document.getElementById("symbology-message");
+
+    msg.innerHTML = "";
+
+    try {
+        layer_GypateUjsjellsit_6.eachLayer(function(lyr) {
+            var props = lyr.feature.properties || {};
+
+            if (mode === "categorized") {
+                var attrVal = props[field];
+                var color = getRandomColorByCategory(attrVal);
+
+                lyr.setStyle({
+                    color: color,
+                    dashArray: "",
+                    lineCap: "round",
+                    lineJoin: "round",
+                    weight: 3,
+                    opacity: 1,
+                    fillOpacity: 0,
+                    interactive: true
+                });
+
+            } else if (mode === "graduated") {
+                var dimVal = parseDimensionValue(props[field]);
+                var weight = getWeightFromDimension(dimVal);
+
+                lyr.setStyle({
+                    color: "rgba(44,91,246,1.0)",
+                    dashArray: "",
+                    lineCap: "round",
+                    lineJoin: "round",
+                    weight: weight,
+                    opacity: 1,
+                    fillOpacity: 0,
+                    interactive: true
+                });
+            }
+        });
+
+        if (mode === "categorized") {
+            renderCategorizedLegend(field);
+            msg.innerHTML = '<div class="sidebar-success">Simbolizimi sipas kategorive u aplikua me sukses.</div>';
+        } else {
+            renderGraduatedLegend(field);
+            msg.innerHTML = '<div class="sidebar-success">Simbolizimi sipas trashësisë u aplikua me sukses.</div>';
+        }
+
+    } catch (e) {
+        msg.innerHTML = '<div class="sidebar-error">Gabim gjatë simbolizimit të shtresës.</div>';
+        clearSymbologyLegend();
+    }
+}
+
+function resetLayerSymbology() {
+    var msg = document.getElementById("symbology-message");
+    msg.innerHTML = "";
+
+    try {
+        layer_GypateUjsjellsit_6.eachLayer(function(lyr) {
+            lyr.setStyle({
+                color: "rgba(44,91,246,1.0)",
+                dashArray: "4.0,2.0,1.0,2.0",
+                lineCap: "square",
+                lineJoin: "bevel",
+                weight: 1.0,
+                fillOpacity: 0,
+                interactive: true
+            });
+        });
+
+        clearSymbologyLegend();
+        msg.innerHTML = '<div class="sidebar-success">U rikthye simbolizimi origjinal.</div>';
+    } catch (e) {
+        msg.innerHTML = '<div class="sidebar-error">Gabim gjatë rikthimit të simbolizimit.</div>';
+    }
+}
+
+function updateSymbologyModeByField() {
+    var field = document.getElementById("symbology-field-select").value;
+    var modeSelect = document.getElementById("symbology-mode-select");
+
+    if (field === "MATERIAL") {
+        modeSelect.value = "categorized";
+    } else if (field === "DIMENSION") {
+        modeSelect.value = "graduated";
+    }
+}
+window.addEventListener("load", function () {
+        setTimeout(function () {
+            moveLeafletControlsToSidebar();
+            populateAttributeFields();
+        }, 500);
+
+        document.getElementById("coord-search-btn").addEventListener("click", goToKosovarefCoordinates);
+        document.getElementById("download-geojson-btn").addEventListener("click", downloadVisibleGeoJSON);
+        document.getElementById("print-map-btn").addEventListener("click", printMapPortal);
+        document.getElementById("attribute-select-btn").addEventListener("click", selectByAttribute);
+        document.getElementById("attribute-reset-btn").addEventListener("click", resetAttributeSelection);
+
+document.getElementById("apply-symbology-btn").addEventListener("click", applyLayerSymbology);
+document.getElementById("reset-symbology-btn").addEventListener("click", resetLayerSymbology);
+document.getElementById("symbology-field-select").addEventListener("change", updateSymbologyModeByField);
+        
+document.getElementById("coord-search-input").addEventListener("keypress", function(e) {
+            if (e.key === "Enter") goToKosovarefCoordinates();
+        });
+    });
+})();
+</script> </body>
+</html>
