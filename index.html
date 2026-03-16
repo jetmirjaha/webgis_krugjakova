@@ -344,9 +344,40 @@ html, body {
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
     z-index: 1800;
     overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: visible;
     border: 1px solid #d7d7d7;
     backdrop-filter: blur(4px);
+    transition: left 0.35s ease;
+}
+
+#geoportal-sidebar.minimized {
+    left: -295px;
+}
+
+#sidebar-toggle-btn {
+    position: absolute;
+    top: 50%;
+    right: 4px;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 54px;
+    background: #0d4c73;
+    color: #ffffff;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.18);
+    z-index: 2500;
+    user-select: none;
+    opacity: 0.9;
+}
+
+#sidebar-toggle-btn:hover {
+    background: #083a58;
 }
 
 .sidebar-header {
@@ -601,6 +632,12 @@ html, body {
         width: 250px;
     }
 }
+/* MINIMIZIMI I PANELIT TE VEG LAVE */
+
+
+#sidebar-toggle-btn:hover {
+    background: #083a58;
+}
 </style>
         <title></title>
     </head>
@@ -626,6 +663,7 @@ html, body {
         </div>
     </div>
 <div id="geoportal-sidebar">
+    <div id="sidebar-toggle-btn" title="Hap / Mbyll panelin">❮</div>
     <div class="sidebar-header">Paneli i Veglave</div>
     <div class="sidebar-content">
 
@@ -2638,10 +2676,27 @@ function updateSymbologyModeByField() {
         modeSelect.value = "graduated";
     }
 }
+function initSidebarToggle() {
+    var sidebar = document.getElementById("geoportal-sidebar");
+    var toggleBtn = document.getElementById("sidebar-toggle-btn");
+
+    if (!sidebar || !toggleBtn) return;
+
+    toggleBtn.addEventListener("click", function () {
+        sidebar.classList.toggle("minimized");
+
+        if (sidebar.classList.contains("minimized")) {
+            toggleBtn.innerHTML = "❯";
+        } else {
+            toggleBtn.innerHTML = "❮";
+        }
+    });
+}
 window.addEventListener("load", function () {
         setTimeout(function () {
             moveLeafletControlsToSidebar();
             populateAttributeFields();
+            initSidebarToggle();
         }, 500);
 
         document.getElementById("coord-search-btn").addEventListener("click", goToKosovarefCoordinates);
