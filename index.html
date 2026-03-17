@@ -196,29 +196,80 @@ html, body {
 
 @media screen and (max-width: 768px) {
     #topbar {
-        padding: 8px 10px;
+        height: 68px;
+        min-height: 68px;
+        padding: 4px 8px;
+        flex-wrap: nowrap;
+        row-gap: 0;
+    }
+
+    .topbar-left,
+    .topbar-right {
+        width: auto;
+        display: flex;
+        align-items: center;
+    }
+
+    .topbar-left {
+        gap: 8px;
+        flex: 1;
+        min-width: 0;
+    }
+
+    .topbar-right {
+        gap: 6px;
+        margin-left: 8px;
+        flex-shrink: 0;
+    }
+
+    .topbar-title {
+        line-height: 1.05;
     }
 
     .topbar-title .main-title {
-    font-size: 15px;
-}
+        font-size: 11px;
+        font-weight: 700;
+    }
 
-.topbar-title .sub-title {
-    font-size: 11px;
-}
+    .topbar-title .sub-title {
+        font-size: 8px;
+        font-weight: 600;
+        margin-top: 2px;
+    }
+
+    .topbar-university-text {
+        line-height: 1.05;
+    }
 
     .topbar-university-text .uni-line-1,
-.topbar-university-text .uni-line-2 {
-    font-size: 10px;
-}
+    .topbar-university-text .uni-line-2 {
+        font-size: 7px;
+        font-weight: 700;
+    }
 
-.topbar-university-text .uni-line-3 {
-    font-size: 8px;
-}
+    .topbar-university-text .uni-line-3 {
+        font-size: 6px;
+        font-weight: 600;
+        margin-top: 1px;
+    }
 
-    .kru-logo,
+    .kru-logo {
+        height: 28px;
+        width: auto;
+    }
+
     .up-logo {
-        height: 38px;
+        height: 26px;
+        width: auto;
+    }
+
+    #map {
+        top: 68px;
+        height: calc(100% - 68px - 30px);
+    }
+
+    .leaflet-top {
+        top: 73px;
     }
 }
 #bottombar {
@@ -328,8 +379,9 @@ html, body {
     }
 
     #map {
-        height: calc(100% - 110px - 30px);
-    }
+    top: 68px;
+    height: calc(100% - 68px - 30px);
+}
 
     .leaflet-bottom {
         bottom: 2px !important;
