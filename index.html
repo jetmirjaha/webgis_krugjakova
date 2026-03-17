@@ -644,6 +644,24 @@ html, body {
 #sidebar-toggle-btn:hover {
     background: #083a58;
 }
+.burime-label-icon {
+    background: transparent !important;
+    border: none !important;
+}
+
+.burime-label-box {
+    display: inline-block;
+    white-space: nowrap;
+    color: #000;
+    font-size: 12px;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    background: rgba(255,255,255,0.95);
+    padding: 2px 6px;
+    border: 1px solid #333;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.25);
+}
 </style>
         <title></title>
     </head>
@@ -1713,88 +1731,60 @@ var zoomControl = L.control.zoom({
         });
         bounds_group.addLayer(layer_Valvulat_11);
         map.addLayer(layer_Valvulat_11);
-        map.on("zoomend", function(e) {
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_PusetateKanalizimit_3);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_PusetateKanalizimit_3);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 8) {
-                map.addLayer(layer_Burimeteujit_4);
-            } else if (map.getZoom() > 19 || map.getZoom() < 8) {
-                map.removeLayer(layer_Burimeteujit_4);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_Valvulateajrit_5);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_Valvulateajrit_5);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_Hidrantt_7);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_Hidrantt_7);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
-                map.addLayer(layer_Rezervuart_8);
-            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
-                map.removeLayer(layer_Rezervuart_8);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
-                map.addLayer(layer_StacionetePompimit_9);
-            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
-                map.removeLayer(layer_StacionetePompimit_9);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 14) {
-                map.addLayer(layer_Ujmatsitkryesorzonal_10);
-            } else if (map.getZoom() > 19 || map.getZoom() < 14) {
-                map.removeLayer(layer_Ujmatsitkryesorzonal_10);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_Valvulat_11);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_Valvulat_11);
-            }
-        });
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_PusetateKanalizimit_3);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_PusetateKanalizimit_3);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 8) {
-                map.addLayer(layer_Burimeteujit_4);
-            } else if (map.getZoom() > 19 || map.getZoom() < 8) {
-                map.removeLayer(layer_Burimeteujit_4);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_Valvulateajrit_5);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_Valvulateajrit_5);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_Hidrantt_7);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_Hidrantt_7);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
-                map.addLayer(layer_Rezervuart_8);
-            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
-                map.removeLayer(layer_Rezervuart_8);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 10) {
-                map.addLayer(layer_StacionetePompimit_9);
-            } else if (map.getZoom() > 19 || map.getZoom() < 10) {
-                map.removeLayer(layer_StacionetePompimit_9);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 14) {
-                map.addLayer(layer_Ujmatsitkryesorzonal_10);
-            } else if (map.getZoom() > 19 || map.getZoom() < 14) {
-                map.removeLayer(layer_Ujmatsitkryesorzonal_10);
-            }
-            if (map.getZoom() <= 19 && map.getZoom() >= 16) {
-                map.addLayer(layer_Valvulat_11);
-            } else if (map.getZoom() > 19 || map.getZoom() < 16) {
-                map.removeLayer(layer_Valvulat_11);
-            }
+        function updatePointLayerVisibility() {
+    var z = map.getZoom();
+
+    if (z >= 16) {
+        map.addLayer(layer_PusetateKanalizimit_3);
+    } else {
+        map.removeLayer(layer_PusetateKanalizimit_3);
+    }
+
+    if (z >= 8) {
+        map.addLayer(layer_Burimeteujit_4);
+    } else {
+        map.removeLayer(layer_Burimeteujit_4);
+    }
+
+    if (z >= 16) {
+        map.addLayer(layer_Valvulateajrit_5);
+    } else {
+        map.removeLayer(layer_Valvulateajrit_5);
+    }
+
+    if (z >= 16) {
+        map.addLayer(layer_Hidrantt_7);
+    } else {
+        map.removeLayer(layer_Hidrantt_7);
+    }
+
+    if (z >= 10) {
+        map.addLayer(layer_Rezervuart_8);
+    } else {
+        map.removeLayer(layer_Rezervuart_8);
+    }
+
+    if (z >= 10) {
+        map.addLayer(layer_StacionetePompimit_9);
+    } else {
+        map.removeLayer(layer_StacionetePompimit_9);
+    }
+
+    if (z >= 14) {
+        map.addLayer(layer_Ujmatsitkryesorzonal_10);
+    } else {
+        map.removeLayer(layer_Ujmatsitkryesorzonal_10);
+    }
+
+    if (z >= 16) {
+        map.addLayer(layer_Valvulat_11);
+    } else {
+        map.removeLayer(layer_Valvulat_11);
+    }
+}
+
+map.on("zoomend", updatePointLayerVisibility);
+updatePointLayerVisibility();
         const url = {"Nominatim OSM": "https://nominatim.openstreetmap.org/search?format=geojson&addressdetails=1&",
         "France BAN": "https://api-adresse.data.gouv.fr/search/?"}
         var photonControl = L.control.photon({
@@ -1936,17 +1926,7 @@ var zoomControl = L.control.zoom({
                         });
                     }
                 }
-                if (map.hasLayer(layer_Burimeteujit_4)) {
-                    if (map.getZoom() <= 9 && map.getZoom() >= 19) {
-                        layer_Burimeteujit_4.eachLayer(function (layer) {
-                            layer.openTooltip();
-                        });
-                    } else {
-                        layer_Burimeteujit_4.eachLayer(function (layer) {
-                            layer.closeTooltip();
-                        });
-                    }
-                }
+                
                 if (map.hasLayer(layer_GypateUjsjellsit_6)) {
                     if (map.getZoom() <= 18 && map.getZoom() >= 19) {
                         layer_GypateUjsjellsit_6.eachLayer(function (layer) {
@@ -1995,21 +1975,57 @@ var zoomControl = L.control.zoom({
               addLabel(layer, i);
               i++;
         });
-        var i = 0;
-        layer_Burimeteujit_4.eachLayer(function(layer) {
-            var context = {
-                feature: layer.feature,
-                variables: {}
-            };
-            layer.bindTooltip((layer.feature.properties['Emri'] !== null?String('<div style="color: #323232; font-size: 5pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['Emri']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_Burimeteujit_4'});
-            labels.push(layer);
-            totalMarkers += 1;
-              layer.added = true;
-              addLabel(layer, i);
-              i++;
-        });
-        var i = 0;
-        layer_GypateUjsjellsit_6.eachLayer(function(layer) {
+        var burimeLabelMarkers = [];
+
+function clearBurimeLabels() {
+    burimeLabelMarkers.forEach(function(m) {
+        if (map.hasLayer(m)) {
+            map.removeLayer(m);
+        }
+    });
+    burimeLabelMarkers = [];
+}
+
+function drawBurimeLabels() {
+    clearBurimeLabels();
+
+    if (!map.hasLayer(layer_Burimeteujit_4)) return;
+
+    var z = map.getZoom();
+    if (z < 12) return;
+
+    layer_Burimeteujit_4.eachLayer(function(layer) {
+        var emri = layer.feature && layer.feature.properties ? layer.feature.properties['Emri'] : null;
+
+        if (emri !== null && emri !== undefined && String(emri).trim() !== '') {
+            var latlng = layer.getLatLng();
+
+            var labelMarker = L.marker(latlng, {
+                interactive: false,
+                keyboard: false,
+                icon: L.divIcon({
+                    className: 'burime-label-icon',
+                    html: '<div class="burime-label-box">' + String(emri) + '</div>',
+                    iconSize: null,
+                    iconAnchor: [-10, 18]
+                })
+            });
+
+            labelMarker.addTo(map);
+            burimeLabelMarkers.push(labelMarker);
+        }
+    });
+}
+
+map.on("zoomend", drawBurimeLabels);
+map.on("moveend", drawBurimeLabels);
+map.on("layeradd", drawBurimeLabels);
+map.on("layerremove", drawBurimeLabels);
+
+drawBurimeLabels();
+
+var i = 0;
+layer_GypateUjsjellsit_6.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
@@ -2058,17 +2074,7 @@ var zoomControl = L.control.zoom({
                         });
                     }
                 }
-                if (map.hasLayer(layer_Burimeteujit_4)) {
-                    if (map.getZoom() <= 9 && map.getZoom() >= 19) {
-                        layer_Burimeteujit_4.eachLayer(function (layer) {
-                            layer.openTooltip();
-                        });
-                    } else {
-                        layer_Burimeteujit_4.eachLayer(function (layer) {
-                            layer.closeTooltip();
-                        });
-                    }
-                }
+                
                 if (map.hasLayer(layer_GypateUjsjellsit_6)) {
                     if (map.getZoom() <= 18 && map.getZoom() >= 19) {
                         layer_GypateUjsjellsit_6.eachLayer(function (layer) {
@@ -2112,16 +2118,19 @@ var zoomControl = L.control.zoom({
         } else {
             document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
         }
-        resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
-        map.on("zoomend", function(){
-            resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
-        });
-        map.on("layeradd", function(){
-            resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
-        });
-        map.on("layerremove", function(){
-            resetLabels([layer_GypateKanalizimit_2,layer_Burimeteujit_4,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
-        });
+        resetLabels([layer_GypateKanalizimit_2,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+
+map.on("zoomend", function(){
+    resetLabels([layer_GypateKanalizimit_2,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+});
+
+map.on("layeradd", function(){
+    resetLabels([layer_GypateKanalizimit_2,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+});
+
+map.on("layerremove", function(){
+    resetLabels([layer_GypateKanalizimit_2,layer_GypateUjsjellsit_6,layer_Rezervuart_8,layer_StacionetePompimit_9]);
+});
         </script>        
 </script>  <script>
 
