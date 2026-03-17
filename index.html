@@ -373,15 +373,42 @@ html, body {
 
 @media screen and (max-width: 768px) {
     #bottombar {
-        font-size: 11px;
-        height: 30px;
-        padding: 0 8px;
+        font-size: 8px;
+        height: 24px;
+        padding: 0 6px;
+    }
+
+    #bottom-left,
+    #bottom-center,
+    #bottom-right {
+        font-size: 8px;
+        line-height: 1;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    #bottom-center {
+        font-size: 8px;
+    }
+
+    #bottom-right {
+        font-size: 7px;
+    }
+
+    .author-badge {
+        gap: 3px;
+    }
+
+    .author-symbol {
+        width: 12px;
+        height: 12px;
+        font-size: 7px;
     }
 
     #map {
-    top: 68px;
-    height: calc(100% - 68px - 30px);
-}
+        top: 68px;
+        height: calc(100% - 68px - 24px);
+    }
 
     .leaflet-bottom {
         bottom: 2px !important;
@@ -389,12 +416,6 @@ html, body {
 
     .leaflet-control-attribution {
         display: none !important;
-    }
-
-    .author-symbol {
-        width: 16px;
-        height: 16px;
-        font-size: 10px;
     }
 }
 /* SIDEBAR */
