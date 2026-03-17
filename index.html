@@ -227,7 +227,9 @@ html, body {
     left: 0;
     right: 0;
     height: 32px;
-    background: #4b2e22;
+
+    background: linear-gradient(90deg, #082a5e, #0d4c73);
+
     color: #ffffff;
     display: flex;
     align-items: center;
@@ -235,9 +237,11 @@ html, body {
     padding: 0 14px;
     box-sizing: border-box;
     z-index: 2000;
+
     font-family: Arial, sans-serif;
     font-size: 13px;
-    border-top: 1px solid #2f1c14;
+
+    border-top: 1px solid #06224d;
 }
 
 #bottom-left,
@@ -297,7 +301,12 @@ html, body {
 }
 
 .leaflet-bottom {
-    bottom: 34px;
+    bottom: 2px;
+}
+.leaflet-control-attribution {
+    font-size: 10px;
+    padding: 2px 6px;
+    opacity: 0.8;
 }
 
 @media screen and (max-width: 1300px) {
@@ -335,12 +344,12 @@ html, body {
 /* SIDEBAR */
 #geoportal-sidebar {
     position: fixed;
-    top: 110px;
-    left: 12px;
-    bottom: 44px;
+    top: 90px;
+    left: 0;
+    bottom: 32px;
     width: 320px;
     background: rgba(255, 255, 255, 0.96);
-    border-radius: 14px;
+    border-radius: 0 14px 0 0;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
     z-index: 1800;
     overflow-y: auto;
@@ -591,10 +600,10 @@ html, body {
 /* North Arrow */
 #north-arrow-box {
     position: fixed;
-    top: 100px;        /* me lart qe mos te konfliktoje me zoom */
-    right: 12px;
-    width: 44px;       /* me i vogel */
-    height: 64px;      /* me i vogel */
+    top: 100px;
+    right: 9px;
+    width: 40px;
+    height: 58px;
     z-index: 1900;
     display: flex;
     flex-direction: column;
@@ -2174,7 +2183,7 @@ function updateCoordsFinal(e) {
         var projY = Number(projected[1]).toFixed(2);
 
         document.getElementById("bottom-left").innerHTML =
-            "Kosovaref01: X = " + projY + " | Y = " + projX;
+    "Kosovaref01: Y = " + projX + " | X = " + projY;
 
     } catch (e) {
 
@@ -2707,12 +2716,27 @@ function initSidebarToggle() {
         }
     });
 }
+function syncSidebarTogglePosition() {
+    var sidebar = document.getElementById("geoportal-sidebar");
+    var toggleBtn = document.getElementById("sidebar-toggle-btn");
+
+    if (!sidebar || !toggleBtn) return;
+
+    var visibleCenter = sidebar.scrollTop + (sidebar.clientHeight / 2);
+    toggleBtn.style.top = visibleCenter + "px";
+}
 window.addEventListener("load", function () {
         setTimeout(function () {
             moveLeafletControlsToSidebar();
             populateAttributeFields();
             initSidebarToggle();
+            syncSidebarTogglePosition();
         }, 500);
+
+        var sidebar = document.getElementById("geoportal-sidebar");
+        if (sidebar) {
+            sidebar.addEventListener("scroll", syncSidebarTogglePosition);
+        }
 
         document.getElementById("coord-search-btn").addEventListener("click", goToKosovarefCoordinates);
         document.getElementById("download-geojson-btn").addEventListener("click", downloadVisibleGeoJSON);
@@ -2720,11 +2744,11 @@ window.addEventListener("load", function () {
         document.getElementById("attribute-select-btn").addEventListener("click", selectByAttribute);
         document.getElementById("attribute-reset-btn").addEventListener("click", resetAttributeSelection);
 
-document.getElementById("apply-symbology-btn").addEventListener("click", applyLayerSymbology);
-document.getElementById("reset-symbology-btn").addEventListener("click", resetLayerSymbology);
-document.getElementById("symbology-field-select").addEventListener("change", updateSymbologyModeByField);
+        document.getElementById("apply-symbology-btn").addEventListener("click", applyLayerSymbology);
+        document.getElementById("reset-symbology-btn").addEventListener("click", resetLayerSymbology);
+        document.getElementById("symbology-field-select").addEventListener("change", updateSymbologyModeByField);
         
-document.getElementById("coord-search-input").addEventListener("keypress", function(e) {
+        document.getElementById("coord-search-input").addEventListener("keypress", function(e) {
             if (e.key === "Enter") goToKosovarefCoordinates();
         });
     });
