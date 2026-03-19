@@ -810,6 +810,27 @@ height: 22px;
 .defect-cancel-btn:hover {
     background: #5e3723;
 }
+.leaflet-control-locate-custom a {
+    width: 34px;
+    height: 34px;
+    line-height: 34px;
+    display: block;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #1f2d3d;
+    background: #ffffff;
+}
+
+.leaflet-control-locate-custom a:hover {
+    background: #f2f2f2;
+}
+
+.leaflet-control-locate-custom a span {
+    display: inline-block;
+    transform: translateY(1px);
+}
 </style>
         <title></title>
     </head>
@@ -1009,6 +1030,8 @@ height: 22px;
         <script src="data/Valvulat_11.js"></script>
         <script>
         var highlightLayer;
+var currentLocationMarker = null;
+var currentLocationCircle = null;
         function highlightFeature(e) {
             highlightLayer = e.target;
 
@@ -1093,6 +1116,29 @@ height: 22px;
 var zoomControl = L.control.zoom({
     position: 'topright'
 }).addTo(map);
+var LocateControl = L.Control.extend({
+    options: {
+        position: 'topright'
+    },
+
+    onAdd: function(map) {
+        var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-locate-custom');
+        var link = L.DomUtil.create('a', '', container);
+        link.href = '#';
+        link.title = 'Gjej vendndodhjen time';
+        link.innerHTML = '<span>⌖</span>';
+
+        L.DomEvent.disableClickPropagation(container);
+        L.DomEvent.on(link, 'click', function(e) {
+            L.DomEvent.stop(e);
+            locateCurrentUser();
+        });
+
+        return container;
+    }
+});
+
+map.addControl(new LocateControl());
         var measureControl = new L.Control.Measure({
             position: 'topleft',
             primaryLengthUnit: 'meters',
@@ -2433,7 +2479,61 @@ window.addEventListener("load", function () {
         } catch (e) {}
     }
 
-    function goToKosovarefCoordinates() {
+function locateCurrentUser() {
+    if (!navigator.geolocation) {
+        alert("Shfletuesi nuk e mbështet geolokacionin.");
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            var lat = position.coords.latitude;
+            var lng = position.coords.longitude;
+            var accuracy = position.coords.accuracy;
+
+            if (currentLocationMarker) {
+                map.removeLayer(currentLocationMarker);
+            }
+
+            if (currentLocationCircle) {
+                map.removeLayer(currentLocationCircle);
+            }
+
+            currentLocationMarker = L.marker([lat, lng]).addTo(map)
+                .bindPopup("Vendndodhja juaj aktuale")
+                .openPopup();
+
+            currentLocationCircle = L.circle([lat, lng], {
+                radius: accuracy,
+                color: "#136aec",
+                weight: 1.5,
+                fillColor: "#136aec",
+                fillOpacity: 0.15
+            }).addTo(map);
+
+            map.setView([lat, lng], 18);
+        },
+        function(error) {
+            var msg = "Nuk u arrit të merret vendndodhja.";
+            
+            if (error.code === 1) {
+                msg = "Qasja në lokacion u refuzua nga përdoruesi.";
+            } else if (error.code === 2) {
+                msg = "Vendndodhja nuk është e disponueshme.";
+            } else if (error.code === 3) {
+                msg = "Kërkesa për vendndodhje skadoi.";
+            }
+
+            alert(msg);
+        },
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+    );
+}    
+function goToKosovarefCoordinates() {
         var input = document.getElementById("coord-search-input");
         var msg = document.getElementById("coord-search-message");
         msg.innerHTML = "";
