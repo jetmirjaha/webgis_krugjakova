@@ -13,6 +13,7 @@
         <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.9.0/proj4.js"></script>
   <style>
 html, body {
@@ -1018,6 +1019,7 @@ height: 22px;
         <script src="js/leaflet.photon.js"></script>
         <script src="js/leaflet-measure.js"></script>
         <script src="js/leaflet-search.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
         <script src="data/GypateKanalizimit_2.js"></script>
         <script src="data/PusetateKanalizimit_3.js"></script>
         <script src="data/Burimeteujit_4.js"></script>
@@ -1032,6 +1034,8 @@ height: 22px;
         var highlightLayer;
 var currentLocationMarker = null;
 var currentLocationCircle = null;
+var currentUserLatLng = null;
+var routingControl = null;
         function highlightFeature(e) {
             highlightLayer = e.target;
 
@@ -2499,7 +2503,8 @@ window.locateCurrentUser = function() {
                 map.removeLayer(currentLocationCircle);
             }
 
-            currentLocationMarker = L.marker([lat, lng]).addTo(map)
+currentUserLatLng = L.latLng(lat, lng);            
+currentLocationMarker = L.marker([lat, lng]).addTo(map)
                 .bindPopup("Vendndodhja juaj aktuale")
                 .openPopup();
 
@@ -2533,6 +2538,63 @@ window.locateCurrentUser = function() {
         }
     );
 }    
+function routeToDestination(destinationLatLng, destinationName) {
+    if (!currentUserLatLng) {
+        alert("Fillimisht duhet të gjendet vendndodhja juaj aktuale.");
+        return;
+    }
+
+    if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+    }
+
+    routingControl = L.Routing.control({
+        waypoints: [
+            currentUserLatLng,
+            destinationLatLng
+        ],
+        routeWhileDragging: false,
+        addWaypoints: false,
+        draggableWaypoints: false,
+        fitSelectedRoutes: true,
+        showAlternatives: false,
+        lineOptions: {
+            styles: [
+                { color: '#0d5f8f', opacity: 0.9, weight: 5 }
+            ]
+        },
+        createMarker: function(i, wp) {
+            if (i === 0) {
+                return L.marker(wp.latLng).bindPopup("Nisja: Vendndodhja juaj");
+            } else {
+                return L.marker(wp.latLng).bindPopup("Destinacioni: " + (destinationName || "Objekti"));
+            }
+        }
+    }).addTo(map);
+}
+function bindRouteOnLayerClick(layerGroup, nameField) {
+    layerGroup.eachLayer(function(layer) {
+        layer.on("click", function() {
+            var latlng = null;
+
+            if (typeof layer.getLatLng === "function") {
+                latlng = layer.getLatLng();
+            } else if (typeof layer.getBounds === "function") {
+                latlng = layer.getBounds().getCenter();
+            }
+
+            if (!latlng) return;
+
+            var destinationName = "Objekti";
+            if (layer.feature && layer.feature.properties && nameField && layer.feature.properties[nameField]) {
+                destinationName = layer.feature.properties[nameField];
+            }
+
+            routeToDestination(latlng, destinationName);
+        });
+    });
+}
 function goToKosovarefCoordinates() {
         var input = document.getElementById("coord-search-input");
         var msg = document.getElementById("coord-search-message");
@@ -3027,6 +3089,19 @@ function syncSidebarTogglePosition() {
 function refreshDefectLayer() {
     layer_Defektet.clearLayers();
     layer_Defektet.addData(defectPointsData);
+
+    layer_Defektet.eachLayer(function(layer) {
+        layer.on("click", function() {
+            var latlng = layer.getLatLng();
+            var destinationName = "Pikë defekti";
+
+            if (layer.feature && layer.feature.properties && layer.feature.properties.lloji_defektit) {
+                destinationName = layer.feature.properties.lloji_defektit;
+            }
+
+            routeToDestination(latlng, destinationName);
+        });
+    });
 }
 
 function getKosovarefCoordsFromLatLng(latlng) {
@@ -3213,7 +3288,14 @@ document.getElementById("start-defect-point-btn").addEventListener("click", acti
 document.getElementById("clear-defect-points-btn").addEventListener("click", clearDefectPoints);
 document.getElementById("download-defect-points-btn").addEventListener("click", downloadDefectPointsGeoJSON);
         
-        document.getElementById("coord-search-input").addEventListener("keypress", function(e) {
+        bindRouteOnLayerClick(layer_Defektet, "lloji_defektit");
+        bindRouteOnLayerClick(layer_Rezervuart_8, "Emertimi");
+        bindRouteOnLayerClick(layer_StacionetePompimit_9, "Emertimi");
+        bindRouteOnLayerClick(layer_Burimeteujit_4, "Emri");
+        bindRouteOnLayerClick(layer_Hidrantt_7, "ID");
+        bindRouteOnLayerClick(layer_Valvulat_11, "ID");
+        bindRouteOnLayerClick(layer_Ujmatsitkryesorzonal_10, "ID");        
+document.getElementById("coord-search-input").addEventListener("keypress", function(e) {
             if (e.key === "Enter") goToKosovarefCoordinates();
         });
     });
