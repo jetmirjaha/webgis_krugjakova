@@ -1131,7 +1131,7 @@ var LocateControl = L.Control.extend({
         L.DomEvent.disableClickPropagation(container);
         L.DomEvent.on(link, 'click', function(e) {
             L.DomEvent.stop(e);
-            locateCurrentUser();
+            window.locateCurrentUser();
         });
 
         return container;
@@ -2479,7 +2479,7 @@ window.addEventListener("load", function () {
         } catch (e) {}
     }
 
-function locateCurrentUser() {
+window.locateCurrentUser = function() {
     if (!navigator.geolocation) {
         alert("Shfletuesi nuk e mbështet geolokacionin.");
         return;
