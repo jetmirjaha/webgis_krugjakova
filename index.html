@@ -2810,10 +2810,10 @@ window.createRouteToTarget = function(targetLatLng, targetLabel) {
         fitSelectedRoutes: true,
         showAlternatives: false,
         lineOptions: {
-            styles: [
-                { color: '#0d5f8f', opacity: 0.9, weight: 5 }
-            ]
-        },
+    styles: [
+        { color: '#FFD700', opacity: 1, weight: 5, dashArray: '10, 6' }
+    ]
+},
         createMarker: function(i, wp, nWps) {
             if (i === 0) {
                 return L.marker(wp.latLng).bindPopup("Pika e nisjes");
