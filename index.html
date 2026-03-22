@@ -713,6 +713,116 @@ height: 22px;
     border-right: 6px solid transparent;
     border-top: 14px solid #1f1f1f;
 }
+/* PAN CONTROL - 4 SHIGJETAT */
+.leaflet-control-pan-custom {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    margin-top: 0 !important;
+    margin-right: 10px !important;
+}
+
+.leaflet-control-pan-custom .pan-wrap {
+    width: 58px;
+    height: 58px;
+    position: relative;
+}
+
+.leaflet-control-pan-custom a {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    line-height: 18px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+    color: #ffffff;
+    background: #119c21;
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.22);
+    user-select: none;
+    transition: background 0.2s ease, transform 0.15s ease;
+    padding: 0;
+}
+
+.leaflet-control-pan-custom a:hover {
+    background: #0c7e1a;
+    transform: scale(1.04);
+}
+
+.leaflet-control-pan-custom .pan-up {
+    top: 0;
+    left: 19px;
+}
+
+.leaflet-control-pan-custom .pan-left {
+    top: 19px;
+    left: 0;
+}
+
+.leaflet-control-pan-custom .pan-right {
+    top: 19px;
+    right: 0;
+}
+
+.leaflet-control-pan-custom .pan-down {
+    bottom: 0;
+    left: 19px;
+}
+
+/* zoom-i menjëherë poshtë shigjetave */
+.leaflet-top.leaflet-right .leaflet-control-zoom {
+    margin-top: 24px !important;
+    margin-right: 10px !important;
+}
+
+/* butoni i lokacionit menjëherë poshtë zoom-it */
+.leaflet-top.leaflet-right .leaflet-control-locate-custom {
+    margin-top: 6px !important;
+    margin-right: 10px !important;
+}
+
+@media screen and (max-width: 768px) {
+    .leaflet-control-pan-custom .pan-wrap {
+        width: 50px;
+        height: 50px;
+    }
+
+    .leaflet-control-pan-custom a {
+        width: 18px;
+        height: 18px;
+        line-height: 16px;
+        font-size: 12px;
+        border-radius: 5px;
+    }
+
+    .leaflet-control-pan-custom .pan-up {
+        left: 16px;
+    }
+
+    .leaflet-control-pan-custom .pan-left {
+        top: 16px;
+    }
+
+    .leaflet-control-pan-custom .pan-right {
+        top: 16px;
+    }
+
+    .leaflet-control-pan-custom .pan-down {
+        left: 16px;
+    }
+
+    .leaflet-top.leaflet-right .leaflet-control-zoom {
+        margin-top: 20px !important;
+    }
+
+    .leaflet-top.leaflet-right .leaflet-control-locate-custom {
+        margin-top: 5px !important;
+    }
+}
+}
 
 @media screen and (max-width: 1200px) {
     #geoportal-sidebar {
@@ -984,6 +1094,21 @@ height: 22px;
         <div id="defect-point-message"></div>
     </div>
 </div>
+<div class="sidebar-section">
+    <div class="sidebar-section-title">Rruga më e shkurtër</div>
+    <div class="sidebar-section-body">
+        <button id="start-route-start-btn" class="sidebar-btn">Cakto pikën e nisjes në hartë</button>
+        <button id="clear-route-start-btn" class="sidebar-btn secondary">Fshi pikën e nisjes</button>
+        <button id="clear-route-btn" class="sidebar-btn secondary">Fshi rrugën</button>
+
+        <div class="sidebar-small-note">
+            1. Kliko butonin për të caktuar pikën e nisjes në hartë. <br>
+            2. Pastaj kliko mbi një objekt në hartë për të krijuar rrugën deri te ai cak.
+        </div>
+
+        <div id="route-message"></div>
+    </div>
+</div>
 
     </div>
 </div>
@@ -1036,6 +1161,10 @@ var currentLocationMarker = null;
 var currentLocationCircle = null;
 var currentUserLatLng = null;
 var routingControl = null;
+
+var manualRouteStartLatLng = null;
+var manualRouteStartMarker = null;
+var routeStartSelectMode = false;
         function highlightFeature(e) {
             highlightLayer = e.target;
 
@@ -1117,6 +1246,66 @@ var routingControl = null;
                 popup._contentNode.classList.remove('media');
             }
         }
+var PanControl = L.Control.extend({
+    options: {
+        position: 'topright'
+    },
+
+    onAdd: function(map) {
+        var container = L.DomUtil.create('div', 'leaflet-control leaflet-control-pan-custom');
+        var wrap = L.DomUtil.create('div', 'pan-wrap', container);
+
+        var up = L.DomUtil.create('a', 'pan-up', wrap);
+        up.href = '#';
+        up.title = 'Lëviz lart';
+        up.innerHTML = '↑';
+
+        var left = L.DomUtil.create('a', 'pan-left', wrap);
+        left.href = '#';
+        left.title = 'Lëviz majtas';
+        left.innerHTML = '←';
+
+        var right = L.DomUtil.create('a', 'pan-right', wrap);
+        right.href = '#';
+        right.title = 'Lëviz djathtas';
+        right.innerHTML = '→';
+
+        var down = L.DomUtil.create('a', 'pan-down', wrap);
+        down.href = '#';
+        down.title = 'Lëviz poshtë';
+        down.innerHTML = '↓';
+
+        L.DomEvent.disableClickPropagation(container);
+
+        function panByOffset(x, y) {
+            map.panBy([x, y], { animate: true, duration: 0.4 });
+        }
+
+        L.DomEvent.on(up, 'click', function(e) {
+            L.DomEvent.stop(e);
+            panByOffset(0, -180);
+        });
+
+        L.DomEvent.on(left, 'click', function(e) {
+            L.DomEvent.stop(e);
+            panByOffset(-180, 0);
+        });
+
+        L.DomEvent.on(right, 'click', function(e) {
+            L.DomEvent.stop(e);
+            panByOffset(180, 0);
+        });
+
+        L.DomEvent.on(down, 'click', function(e) {
+            L.DomEvent.stop(e);
+            panByOffset(0, 180);
+        });
+
+        return container;
+    }
+});
+
+map.addControl(new PanControl());
 var zoomControl = L.control.zoom({
     position: 'topright'
 }).addTo(map);
@@ -1189,6 +1378,10 @@ function onEachDefectFeature(feature, layer) {
     `;
 
     layer.bindPopup(popupContent);
+
+    layer.on('click', function() {
+        window.createRouteToTarget(layer.getLatLng(), 'Pika e defektit');
+    });
 }
 
 var layer_Defektet = L.geoJson(defectPointsData, {
@@ -1424,6 +1617,10 @@ map.addLayer(layer_Defektet);
 				addClassToPopupIfMedia(content, e.popup);
 			});
 			layer.bindPopup(content, { maxHeight: 400 });
+layer.on('click', function() {
+    var emri = feature.properties['Emri'] ? feature.properties['Emri'] : 'Burimi i ujit';
+    window.createRouteToTarget(layer.getLatLng(), emri);
+});
         }
 
         function style_Burimeteujit_4_0() {
@@ -1644,6 +1841,9 @@ map.addLayer(layer_Defektet);
 				addClassToPopupIfMedia(content, e.popup);
 			});
 			layer.bindPopup(content, { maxHeight: 400 });
+layer.on('click', function() {
+    window.createRouteToTarget(layer.getLatLng(), 'Hidranti');
+});
         }
 
         function style_Hidrantt_7_0() {
@@ -1718,6 +1918,10 @@ map.addLayer(layer_Defektet);
 				addClassToPopupIfMedia(content, e.popup);
 			});
 			layer.bindPopup(content, { maxHeight: 400 });
+layer.on('click', function() {
+    var emri = feature.properties['Emertimi'] ? feature.properties['Emertimi'] : 'Rezervuari';
+    window.createRouteToTarget(layer.getLatLng(), emri);
+});
         }
 
         function style_Rezervuart_8_0() {
@@ -1800,6 +2004,10 @@ map.addLayer(layer_Defektet);
 				addClassToPopupIfMedia(content, e.popup);
 			});
 			layer.bindPopup(content, { maxHeight: 400 });
+layer.on('click', function() {
+    var emri = feature.properties['Emertimi'] ? feature.properties['Emertimi'] : 'Stacioni i pompimit';
+    window.createRouteToTarget(layer.getLatLng(), emri);
+});
         }
 
         function style_StacionetePompimit_9_0() {
@@ -2503,8 +2711,9 @@ window.locateCurrentUser = function() {
                 map.removeLayer(currentLocationCircle);
             }
 
-currentUserLatLng = L.latLng(lat, lng);            
-currentLocationMarker = L.marker([lat, lng]).addTo(map)
+            currentUserLatLng = L.latLng(lat, lng);
+
+            currentLocationMarker = L.marker([lat, lng]).addTo(map)
                 .bindPopup("Vendndodhja juaj aktuale")
                 .openPopup();
 
@@ -2520,7 +2729,7 @@ currentLocationMarker = L.marker([lat, lng]).addTo(map)
         },
         function(error) {
             var msg = "Nuk u arrit të merret vendndodhja.";
-            
+
             if (error.code === 1) {
                 msg = "Qasja në lokacion u refuzua nga përdoruesi.";
             } else if (error.code === 2) {
@@ -2537,10 +2746,51 @@ currentLocationMarker = L.marker([lat, lng]).addTo(map)
             maximumAge: 0
         }
     );
-}    
-function routeToDestination(destinationLatLng, destinationName) {
-    if (!currentUserLatLng) {
-        alert("Fillimisht duhet të gjendet vendndodhja juaj aktuale.");
+};
+
+function activateRouteStartSelection() {
+    routeStartSelectMode = true;
+
+    var msg = document.getElementById("route-message");
+    if (msg) {
+        msg.innerHTML = '<div class="sidebar-success">Kliko në hartë për të caktuar pikën e nisjes.</div>';
+    }
+}
+
+function clearRouteStartPoint() {
+    routeStartSelectMode = false;
+    manualRouteStartLatLng = null;
+
+    if (manualRouteStartMarker) {
+        map.removeLayer(manualRouteStartMarker);
+        manualRouteStartMarker = null;
+    }
+
+    var msg = document.getElementById("route-message");
+    if (msg) {
+        msg.innerHTML = '<div class="sidebar-success">Pika e nisjes u fshi.</div>';
+    }
+}
+
+function clearRouteAnalysis() {
+    if (routingControl) {
+        map.removeControl(routingControl);
+        routingControl = null;
+    }
+
+    var msg = document.getElementById("route-message");
+    if (msg) {
+        msg.innerHTML = '<div class="sidebar-success">Rruga u fshi me sukses.</div>';
+    }
+}
+
+window.createRouteToTarget = function(targetLatLng, targetLabel) {
+    var msg = document.getElementById("route-message");
+
+    if (!manualRouteStartLatLng) {
+        if (msg) {
+            msg.innerHTML = '<div class="sidebar-error">Së pari cakto pikën e nisjes në hartë.</div>';
+        }
         return;
     }
 
@@ -2551,8 +2801,8 @@ function routeToDestination(destinationLatLng, destinationName) {
 
     routingControl = L.Routing.control({
         waypoints: [
-            currentUserLatLng,
-            destinationLatLng
+            L.latLng(manualRouteStartLatLng.lat, manualRouteStartLatLng.lng),
+            L.latLng(targetLatLng.lat, targetLatLng.lng)
         ],
         routeWhileDragging: false,
         addWaypoints: false,
@@ -2564,39 +2814,22 @@ function routeToDestination(destinationLatLng, destinationName) {
                 { color: '#0d5f8f', opacity: 0.9, weight: 5 }
             ]
         },
-        createMarker: function(i, wp) {
+        createMarker: function(i, wp, nWps) {
             if (i === 0) {
-                return L.marker(wp.latLng).bindPopup("Nisja: Vendndodhja juaj");
-            } else {
-                return L.marker(wp.latLng).bindPopup("Destinacioni: " + (destinationName || "Objekti"));
+                return L.marker(wp.latLng).bindPopup("Pika e nisjes");
+            } else if (i === nWps - 1) {
+                return L.marker(wp.latLng).bindPopup(targetLabel || "Caku");
             }
+            return L.marker(wp.latLng);
         }
     }).addTo(map);
+
+    if (msg) {
+        msg.innerHTML = '<div class="sidebar-success">Rruga u krijua me sukses.</div>';
+    }
 }
-function bindRouteOnLayerClick(layerGroup, nameField) {
-    layerGroup.eachLayer(function(layer) {
-        layer.on("click", function() {
-            var latlng = null;
 
-            if (typeof layer.getLatLng === "function") {
-                latlng = layer.getLatLng();
-            } else if (typeof layer.getBounds === "function") {
-                latlng = layer.getBounds().getCenter();
-            }
-
-            if (!latlng) return;
-
-            var destinationName = "Objekti";
-            if (layer.feature && layer.feature.properties && nameField && layer.feature.properties[nameField]) {
-                destinationName = layer.feature.properties[nameField];
-            }
-
-            routeToDestination(latlng, destinationName);
-        });
-    });
-}
-function goToKosovarefCoordinates() {
-        var input = document.getElementById("coord-search-input");
+function goToKosovarefCoordinates() {        var input = document.getElementById("coord-search-input");
         var msg = document.getElementById("coord-search-message");
         msg.innerHTML = "";
 
@@ -3253,6 +3486,27 @@ function downloadDefectPointsGeoJSON() {
 }
 
 map.on("click", function(e) {
+
+    if (routeStartSelectMode) {
+        routeStartSelectMode = false;
+        manualRouteStartLatLng = e.latlng;
+
+        if (manualRouteStartMarker) {
+            map.removeLayer(manualRouteStartMarker);
+        }
+
+        manualRouteStartMarker = L.marker(e.latlng).addTo(map)
+            .bindPopup("Pika e nisjes")
+            .openPopup();
+
+        var routeMsg = document.getElementById("route-message");
+        if (routeMsg) {
+            routeMsg.innerHTML = '<div class="sidebar-success">Pika e nisjes u caktua. Tani kliko mbi një objekt për të krijuar rrugën.</div>';
+        }
+
+        return;
+    }
+
     if (!defectPointMode) return;
 
     defectPointMode = false;
@@ -3262,43 +3516,40 @@ map.on("click", function(e) {
     msg.innerHTML = '<div class="sidebar-success">Zgjidhe të dhënat e defektit dhe ruaje pikën.</div>';
 });
 window.addEventListener("load", function () {
-        setTimeout(function () {
-            moveLeafletControlsToSidebar();
-            populateAttributeFields();
-            initSidebarToggle();
-            syncSidebarTogglePosition();
-        }, 500);
+    setTimeout(function () {
+        moveLeafletControlsToSidebar();
+        populateAttributeFields();
+        initSidebarToggle();
+        syncSidebarTogglePosition();
+    }, 500);
 
-        var sidebar = document.getElementById("geoportal-sidebar");
-        if (sidebar) {
-            sidebar.addEventListener("scroll", syncSidebarTogglePosition);
-        }
+    var sidebar = document.getElementById("geoportal-sidebar");
+    if (sidebar) {
+        sidebar.addEventListener("scroll", syncSidebarTogglePosition);
+    }
 
-        document.getElementById("coord-search-btn").addEventListener("click", goToKosovarefCoordinates);
-        document.getElementById("download-geojson-btn").addEventListener("click", downloadVisibleGeoJSON);
-        document.getElementById("print-map-btn").addEventListener("click", printMapPortal);
-        document.getElementById("attribute-select-btn").addEventListener("click", selectByAttribute);
-        document.getElementById("attribute-reset-btn").addEventListener("click", resetAttributeSelection);
+    document.getElementById("coord-search-btn").addEventListener("click", goToKosovarefCoordinates);
+    document.getElementById("download-geojson-btn").addEventListener("click", downloadVisibleGeoJSON);
+    document.getElementById("print-map-btn").addEventListener("click", printMapPortal);
+    document.getElementById("attribute-select-btn").addEventListener("click", selectByAttribute);
+    document.getElementById("attribute-reset-btn").addEventListener("click", resetAttributeSelection);
 
-        document.getElementById("apply-symbology-btn").addEventListener("click", applyLayerSymbology);
-        document.getElementById("reset-symbology-btn").addEventListener("click", resetLayerSymbology);
-        document.getElementById("symbology-field-select").addEventListener("change", updateSymbologyModeByField);
+    document.getElementById("apply-symbology-btn").addEventListener("click", applyLayerSymbology);
+    document.getElementById("reset-symbology-btn").addEventListener("click", resetLayerSymbology);
+    document.getElementById("symbology-field-select").addEventListener("change", updateSymbologyModeByField);
 
-document.getElementById("start-defect-point-btn").addEventListener("click", activateDefectPointMode);
-document.getElementById("clear-defect-points-btn").addEventListener("click", clearDefectPoints);
-document.getElementById("download-defect-points-btn").addEventListener("click", downloadDefectPointsGeoJSON);
-        
-        bindRouteOnLayerClick(layer_Defektet, "lloji_defektit");
-        bindRouteOnLayerClick(layer_Rezervuart_8, "Emertimi");
-        bindRouteOnLayerClick(layer_StacionetePompimit_9, "Emertimi");
-        bindRouteOnLayerClick(layer_Burimeteujit_4, "Emri");
-        bindRouteOnLayerClick(layer_Hidrantt_7, "ID");
-        bindRouteOnLayerClick(layer_Valvulat_11, "ID");
-        bindRouteOnLayerClick(layer_Ujmatsitkryesorzonal_10, "ID");        
-document.getElementById("coord-search-input").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") goToKosovarefCoordinates();
-        });
+    document.getElementById("start-defect-point-btn").addEventListener("click", activateDefectPointMode);
+    document.getElementById("clear-defect-points-btn").addEventListener("click", clearDefectPoints);
+    document.getElementById("download-defect-points-btn").addEventListener("click", downloadDefectPointsGeoJSON);
+
+    document.getElementById("start-route-start-btn").addEventListener("click", activateRouteStartSelection);
+    document.getElementById("clear-route-start-btn").addEventListener("click", clearRouteStartPoint);
+    document.getElementById("clear-route-btn").addEventListener("click", clearRouteAnalysis);
+
+    document.getElementById("coord-search-input").addEventListener("keypress", function(e) {
+        if (e.key === "Enter") goToKosovarefCoordinates();
     });
+});
 })();
 </script> </body>
 </html>
