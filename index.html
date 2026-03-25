@@ -943,6 +943,34 @@ height: 22px;
     display: inline-block;
     transform: translateY(1px);
 }
+.pdf-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.pdf-item-btn {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 9px 10px;
+    border-radius: 8px;
+    background: #0d5f8f;
+    color: #ffffff;
+    text-decoration: none;
+    text-align: center;
+    font-size: 13px;
+    font-family: Arial, sans-serif;
+    transition: background 0.2s ease;
+}
+
+.pdf-item-btn:hover {
+    background: #0a4d74;
+}
+
+#pdf-open-message {
+    margin-top: 6px;
+}
 </style>
         <title></title>
     </head>
@@ -3516,6 +3544,7 @@ map.on("click", function(e) {
     var msg = document.getElementById("defect-point-message");
     msg.innerHTML = '<div class="sidebar-success">Zgjidhe të dhënat e defektit dhe ruaje pikën.</div>';
 });
+
 window.addEventListener("load", function () {
     setTimeout(function () {
         moveLeafletControlsToSidebar();
@@ -3530,7 +3559,21 @@ window.addEventListener("load", function () {
     }
 
     document.getElementById("coord-search-btn").addEventListener("click", goToKosovarefCoordinates);
-    document.getElementById("download-geojson-btn").addEventListener("click", downloadVisibleGeoJSON);
+    document.getElementById("download-geojson-btn").addEventListener("click", function () {
+    var kodi = prompt("Shëno kodin 4-shifror për shkarkim:");
+
+    if (kodi === null) {
+        return; // nese klikohet Cancel
+    }
+
+    kodi = kodi.trim();
+
+    if (kodi === "1000") {
+        downloadVisibleGeoJSON();
+    } else {
+        alert("Kodi është i pasaktë. Shkarkimi nuk u lejua.");
+    }
+});
     document.getElementById("print-map-btn").addEventListener("click", printMapPortal);
     document.getElementById("attribute-select-btn").addEventListener("click", selectByAttribute);
     document.getElementById("attribute-reset-btn").addEventListener("click", resetAttributeSelection);
