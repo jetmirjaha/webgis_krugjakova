@@ -971,6 +971,43 @@ height: 22px;
 #pdf-open-message {
     margin-top: 6px;
 }
+.network-stats-box {
+    margin-top: 10px;
+    border: 1px solid #d9e2ea;
+    border-radius: 8px;
+    background: #f8fbfd;
+    overflow: hidden;
+}
+
+.network-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-bottom: 1px solid #e4edf3;
+}
+
+.network-stat-item:last-child {
+    border-bottom: none;
+}
+
+.network-stat-label {
+    font-size: 12px;
+    color: #123c56;
+    line-height: 1.3;
+}
+
+.network-stat-value {
+    font-size: 12px;
+    font-weight: bold;
+    color: #0d4c73;
+    white-space: nowrap;
+}
+
+#stats-message {
+    margin-top: 8px;
+}
 </style>
         <title></title>
     </head>
@@ -1136,6 +1173,45 @@ height: 22px;
         </div>
 
         <div id="route-message"></div>
+    </div>
+</div>
+<div class="sidebar-section">
+    <div class="sidebar-section-title">Statistikat e rrjetit</div>
+    <div class="sidebar-section-body">
+        <button id="refresh-stats-btn" class="sidebar-btn">Përditëso statistikat</button>
+
+        <div class="sidebar-small-note">
+            Paraqiten statistikat kryesore për shtresat aktive në hartë.
+        </div>
+
+        <div id="network-stats-box" class="network-stats-box">
+            <div class="network-stat-item">
+                <span class="network-stat-label">Gjatësia e gypave të ujësjellësit</span>
+                <span class="network-stat-value" id="stat-water-pipes">-</span>
+            </div>
+
+            <div class="network-stat-item">
+                <span class="network-stat-label">Gjatësia e kanalizimit</span>
+                <span class="network-stat-value" id="stat-sewer-pipes">-</span>
+            </div>
+
+            <div class="network-stat-item">
+                <span class="network-stat-label">Numri i burimeve</span>
+                <span class="network-stat-value" id="stat-sources">-</span>
+            </div>
+
+            <div class="network-stat-item">
+                <span class="network-stat-label">Numri i rezervuarëve</span>
+                <span class="network-stat-value" id="stat-reservoirs">-</span>
+            </div>
+
+            <div class="network-stat-item">
+                <span class="network-stat-label">Numri i stacioneve të pompimit</span>
+                <span class="network-stat-value" id="stat-pumping">-</span>
+            </div>
+        </div>
+
+        <div id="stats-message"></div>
     </div>
 </div>
 
@@ -3595,5 +3671,104 @@ window.addEventListener("load", function () {
     });
 });
 })();
+function formatLengthKm(lengthMeters) {
+    return (lengthMeters / 1000).toFixed(2) + ' km';
+}
+
+function calculateLatLngLineLength(latlngs) {
+    var total = 0;
+
+    for (var i = 0; i < latlngs.length - 1; i++) {
+        total += latlngs[i].distanceTo(latlngs[i + 1]);
+    }
+
+    return total;
+}
+
+function getLayerTotalLength(layerGroup) {
+    var totalLength = 0;
+
+    if (!layerGroup) return 0;
+
+    layerGroup.eachLayer(function(layer) {
+        if (!layer.getLatLngs) return;
+
+        var latlngs = layer.getLatLngs();
+
+        if (!latlngs || latlngs.length === 0) return;
+
+        if (Array.isArray(latlngs[0])) {
+            for (var i = 0; i < latlngs.length; i++) {
+                totalLength += calculateLatLngLineLength(latlngs[i]);
+            }
+        } else {
+            totalLength += calculateLatLngLineLength(latlngs);
+        }
+    });
+
+    return totalLength;
+}
+function getLayerFeatureCount(layerGroup) {
+    var count = 0;
+
+    if (!layerGroup) return 0;
+
+    layerGroup.eachLayer(function(layer) {
+        if (layer.feature) {
+            count++;
+        }
+    });
+
+    return count;
+}
+
+function setStatsMessage(message, type) {
+    var box = document.getElementById('stats-message');
+    if (!box) return;
+
+    box.className = '';
+    if (type === 'success') {
+        box.classList.add('sidebar-success');
+    } else if (type === 'error') {
+        box.classList.add('sidebar-error');
+    }
+
+    box.innerHTML = message;
+}
+
+function updateNetworkStats() {
+    try {
+        var waterLength = map.hasLayer(layer_GypateUjsjellsit_6) ? getLayerTotalLength(layer_GypateUjsjellsit_6) : 0;
+        var sewerLength = map.hasLayer(layer_GypateKanalizimit_2) ? getLayerTotalLength(layer_GypateKanalizimit_2) : 0;
+        var sourceCount = map.hasLayer(layer_Burimeteujit_4) ? getLayerFeatureCount(layer_Burimeteujit_4) : 0;
+        var reservoirCount = map.hasLayer(layer_Rezervuart_8) ? getLayerFeatureCount(layer_Rezervuart_8) : 0;
+        var pumpingCount = map.hasLayer(layer_StacionetePompimit_9) ? getLayerFeatureCount(layer_StacionetePompimit_9) : 0;
+
+        document.getElementById('stat-water-pipes').textContent = formatLengthKm(waterLength);
+        document.getElementById('stat-sewer-pipes').textContent = formatLengthKm(sewerLength);
+        document.getElementById('stat-sources').textContent = sourceCount;
+        document.getElementById('stat-reservoirs').textContent = reservoirCount;
+        document.getElementById('stat-pumping').textContent = pumpingCount;
+
+        setStatsMessage('Statistikat u përditësuan me sukses.', 'success');
+    } catch (err) {
+        console.error(err);
+        setStatsMessage('Ndodhi një gabim gjatë llogaritjes së statistikave.', 'error');
+    }
+}
+
+document.getElementById('refresh-stats-btn').addEventListener('click', function() {
+    updateNetworkStats();
+});
+
+map.on('layeradd', function() {
+    updateNetworkStats();
+});
+
+map.on('layerremove', function() {
+    updateNetworkStats();
+});
+
+updateNetworkStats();
 </script> </body>
 </html>
