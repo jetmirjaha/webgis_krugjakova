@@ -823,7 +823,6 @@ height: 22px;
         margin-top: 5px !important;
     }
 }
-}
 
 @media screen and (max-width: 1200px) {
     #geoportal-sidebar {
@@ -1185,31 +1184,61 @@ height: 22px;
         </div>
 
         <div id="network-stats-box" class="network-stats-box">
-            <div class="network-stat-item">
-                <span class="network-stat-label">Gjatësia e gypave të ujësjellësit</span>
-                <span class="network-stat-value" id="stat-water-pipes">-</span>
-            </div>
+    <div class="network-stat-item">
+        <span class="network-stat-label">Gjatësia e gypave të ujësjellësit</span>
+        <span class="network-stat-value" id="stat-water-pipes">-</span>
+    </div>
 
-            <div class="network-stat-item">
-                <span class="network-stat-label">Gjatësia e kanalizimit</span>
-                <span class="network-stat-value" id="stat-sewer-pipes">-</span>
-            </div>
+    <div class="network-stat-item">
+        <span class="network-stat-label">Gjatësia e kanalizimit</span>
+        <span class="network-stat-value" id="stat-sewer-pipes">-</span>
+    </div>
 
-            <div class="network-stat-item">
-                <span class="network-stat-label">Numri i burimeve</span>
-                <span class="network-stat-value" id="stat-sources">-</span>
-            </div>
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i burimeve</span>
+        <span class="network-stat-value" id="stat-sources">-</span>
+    </div>
 
-            <div class="network-stat-item">
-                <span class="network-stat-label">Numri i rezervuarëve</span>
-                <span class="network-stat-value" id="stat-reservoirs">-</span>
-            </div>
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i rezervuarëve</span>
+        <span class="network-stat-value" id="stat-reservoirs">-</span>
+    </div>
 
-            <div class="network-stat-item">
-                <span class="network-stat-label">Numri i stacioneve të pompimit</span>
-                <span class="network-stat-value" id="stat-pumping">-</span>
-            </div>
-        </div>
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i stacioneve të pompimit</span>
+        <span class="network-stat-value" id="stat-pumping">-</span>
+    </div>
+
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i valvulave</span>
+        <span class="network-stat-value" id="stat-valves">-</span>
+    </div>
+
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i valvulave të ajrit</span>
+        <span class="network-stat-value" id="stat-air-valves">-</span>
+    </div>
+
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i ujëmatësve kryesor zonal</span>
+        <span class="network-stat-value" id="stat-water-meters">-</span>
+    </div>
+
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i pusetave të kanalizimit</span>
+        <span class="network-stat-value" id="stat-manholes">-</span>
+    </div>
+
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i hidrantëve</span>
+        <span class="network-stat-value" id="stat-hydrants">-</span>
+    </div>
+
+    <div class="network-stat-item">
+        <span class="network-stat-label">Numri i pikave të defekteve</span>
+        <span class="network-stat-value" id="stat-defects">-</span>
+    </div>
+</div>
 
         <div id="stats-message"></div>
     </div>
@@ -3737,18 +3766,33 @@ function setStatsMessage(message, type) {
 }
 
 function updateNetworkStats() {
-    try {
-        var waterLength = map.hasLayer(layer_GypateUjsjellsit_6) ? getLayerTotalLength(layer_GypateUjsjellsit_6) : 0;
-        var sewerLength = map.hasLayer(layer_GypateKanalizimit_2) ? getLayerTotalLength(layer_GypateKanalizimit_2) : 0;
-        var sourceCount = map.hasLayer(layer_Burimeteujit_4) ? getLayerFeatureCount(layer_Burimeteujit_4) : 0;
-        var reservoirCount = map.hasLayer(layer_Rezervuart_8) ? getLayerFeatureCount(layer_Rezervuart_8) : 0;
-        var pumpingCount = map.hasLayer(layer_StacionetePompimit_9) ? getLayerFeatureCount(layer_StacionetePompimit_9) : 0;
+    var waterLength = map.hasLayer(layer_GypateUjsjellsit_6) ? getLayerTotalLength(layer_GypateUjsjellsit_6) : 0;
+    var sewerLength = map.hasLayer(layer_GypateKanalizimit_2) ? getLayerTotalLength(layer_GypateKanalizimit_2) : 0;
 
-        document.getElementById('stat-water-pipes').textContent = formatLengthKm(waterLength);
-        document.getElementById('stat-sewer-pipes').textContent = formatLengthKm(sewerLength);
-        document.getElementById('stat-sources').textContent = sourceCount;
-        document.getElementById('stat-reservoirs').textContent = reservoirCount;
-        document.getElementById('stat-pumping').textContent = pumpingCount;
+    var sourceCount = map.hasLayer(layer_Burimeteujit_4) ? getLayerFeatureCount(layer_Burimeteujit_4) : 0;
+    var reservoirCount = map.hasLayer(layer_Rezervuart_8) ? getLayerFeatureCount(layer_Rezervuart_8) : 0;
+    var pumpingCount = map.hasLayer(layer_StacionetePompimit_9) ? getLayerFeatureCount(layer_StacionetePompimit_9) : 0;
+
+    var valveCount = map.hasLayer(layer_Valvulat_11) ? getLayerFeatureCount(layer_Valvulat_11) : 0;
+    var airValveCount = map.hasLayer(layer_Valvulateajrit_5) ? getLayerFeatureCount(layer_Valvulateajrit_5) : 0;
+    var waterMeterCount = map.hasLayer(layer_Ujmatsitkryesorzonal_10) ? getLayerFeatureCount(layer_Ujmatsitkryesorzonal_10) : 0;
+    var manholeCount = map.hasLayer(layer_PusetateKanalizimit_3) ? getLayerFeatureCount(layer_PusetateKanalizimit_3) : 0;
+    var hydrantCount = map.hasLayer(layer_Hidrantt_7) ? getLayerFeatureCount(layer_Hidrantt_7) : 0;
+    var defectCount = map.hasLayer(layer_Defektet) ? getLayerFeatureCount(layer_Defektet) : 0;
+
+    document.getElementById('stat-water-pipes').textContent = (waterLength / 1000).toFixed(2) + ' km';
+    document.getElementById('stat-sewer-pipes').textContent = (sewerLength / 1000).toFixed(2) + ' km';
+
+    document.getElementById('stat-sources').textContent = sourceCount;
+    document.getElementById('stat-reservoirs').textContent = reservoirCount;
+    document.getElementById('stat-pumping').textContent = pumpingCount;
+
+    document.getElementById('stat-valves').textContent = valveCount;
+    document.getElementById('stat-air-valves').textContent = airValveCount;
+    document.getElementById('stat-water-meters').textContent = waterMeterCount;
+    document.getElementById('stat-manholes').textContent = manholeCount;
+    document.getElementById('stat-hydrants').textContent = hydrantCount;
+    document.getElementById('stat-defects').textContent = defectCount;
 
         setStatsMessage('Statistikat u përditësuan me sukses.', 'success');
     } catch (err) {
@@ -3770,5 +3814,157 @@ map.on('layerremove', function() {
 });
 
 updateNetworkStats();
-</script> </body>
+</script> 
+<script>
+window.addEventListener("load", function () {
+
+    function moveControlsToSidebarFinal() {
+        try {
+            var measureEl = document.querySelector(".leaflet-control-measure");
+            if (measureEl && document.getElementById("tool-measure-container")) {
+                document.getElementById("tool-measure-container").appendChild(measureEl);
+            }
+        } catch (e) {
+            console.log("Gabim te measure control:", e);
+        }
+
+        try {
+            var searchEl = document.querySelector(".leaflet-photon.leaflet-control");
+            if (searchEl && document.getElementById("tool-address-search")) {
+                document.getElementById("tool-address-search").appendChild(searchEl);
+                var photonInputWrap = searchEl.lastChild;
+                if (photonInputWrap) photonInputWrap.style.display = "block";
+            }
+        } catch (e) {
+            console.log("Gabim te search control:", e);
+        }
+
+        try {
+            var layersEl = document.querySelector(".leaflet-control-layers");
+            if (layersEl && document.getElementById("tool-layers-container")) {
+                document.getElementById("tool-layers-container").appendChild(layersEl);
+                layersEl.classList.add("leaflet-control-layers-expanded");
+            }
+        } catch (e) {
+            console.log("Gabim te layers control:", e);
+        }
+    }
+
+    function safeCount(layerGroup) {
+        var count = 0;
+        if (!layerGroup || !layerGroup.eachLayer) return 0;
+
+        layerGroup.eachLayer(function(layer) {
+            if (layer && layer.feature) count++;
+        });
+
+        return count;
+    }
+
+    function safeLength(layerGroup) {
+        var total = 0;
+        if (!layerGroup || !layerGroup.eachLayer) return 0;
+
+        layerGroup.eachLayer(function(layer) {
+            if (!layer || !layer.getLatLngs) return;
+
+            var latlngs = layer.getLatLngs();
+            if (!latlngs || !latlngs.length) return;
+
+            function calcLine(arr) {
+                var s = 0;
+                for (var i = 0; i < arr.length - 1; i++) {
+                    s += arr[i].distanceTo(arr[i + 1]);
+                }
+                return s;
+            }
+
+            if (Array.isArray(latlngs[0])) {
+                for (var i = 0; i < latlngs.length; i++) {
+                    total += calcLine(latlngs[i]);
+                }
+            } else {
+                total += calcLine(latlngs);
+            }
+        });
+
+        return total;
+    }
+
+    function setStatsMessage(msg, type) {
+        var el = document.getElementById("stats-message");
+        if (!el) return;
+
+        el.className = "";
+        if (type === "success") el.classList.add("sidebar-success");
+        if (type === "error") el.classList.add("sidebar-error");
+
+        el.innerHTML = msg;
+    }
+
+    function updateNetworkStatsFinal() {
+        try {
+            var waterLength = (typeof layer_GypateUjsjellsit_6 !== "undefined" && map.hasLayer(layer_GypateUjsjellsit_6)) ? safeLength(layer_GypateUjsjellsit_6) : 0;
+            var sewerLength = (typeof layer_GypateKanalizimit_2 !== "undefined" && map.hasLayer(layer_GypateKanalizimit_2)) ? safeLength(layer_GypateKanalizimit_2) : 0;
+
+            var sourceCount = (typeof layer_Burimeteujit_4 !== "undefined" && map.hasLayer(layer_Burimeteujit_4)) ? safeCount(layer_Burimeteujit_4) : 0;
+            var reservoirCount = (typeof layer_Rezervuart_8 !== "undefined" && map.hasLayer(layer_Rezervuart_8)) ? safeCount(layer_Rezervuart_8) : 0;
+            var pumpingCount = (typeof layer_StacionetePompimit_9 !== "undefined" && map.hasLayer(layer_StacionetePompimit_9)) ? safeCount(layer_StacionetePompimit_9) : 0;
+
+            var valveCount = (typeof layer_Valvulat_11 !== "undefined" && map.hasLayer(layer_Valvulat_11)) ? safeCount(layer_Valvulat_11) : 0;
+            var airValveCount = (typeof layer_Valvulateajrit_5 !== "undefined" && map.hasLayer(layer_Valvulateajrit_5)) ? safeCount(layer_Valvulateajrit_5) : 0;
+            var waterMeterCount = (typeof layer_Ujmatsitkryesorzonal_10 !== "undefined" && map.hasLayer(layer_Ujmatsitkryesorzonal_10)) ? safeCount(layer_Ujmatsitkryesorzonal_10) : 0;
+            var manholeCount = (typeof layer_PusetateKanalizimit_3 !== "undefined" && map.hasLayer(layer_PusetateKanalizimit_3)) ? safeCount(layer_PusetateKanalizimit_3) : 0;
+            var hydrantCount = (typeof layer_Hidrantt_7 !== "undefined" && map.hasLayer(layer_Hidrantt_7)) ? safeCount(layer_Hidrantt_7) : 0;
+            var defectCount = (typeof layer_Defektet !== "undefined" && map.hasLayer(layer_Defektet)) ? safeCount(layer_Defektet) : 0;
+
+            document.getElementById("stat-water-pipes").textContent = (waterLength / 1000).toFixed(2) + " km";
+            document.getElementById("stat-sewer-pipes").textContent = (sewerLength / 1000).toFixed(2) + " km";
+
+            document.getElementById("stat-sources").textContent = sourceCount;
+            document.getElementById("stat-reservoirs").textContent = reservoirCount;
+            document.getElementById("stat-pumping").textContent = pumpingCount;
+
+            document.getElementById("stat-valves").textContent = valveCount;
+            document.getElementById("stat-air-valves").textContent = airValveCount;
+            document.getElementById("stat-water-meters").textContent = waterMeterCount;
+            document.getElementById("stat-manholes").textContent = manholeCount;
+            document.getElementById("stat-hydrants").textContent = hydrantCount;
+            document.getElementById("stat-defects").textContent = defectCount;
+
+            setStatsMessage("Statistikat u përditësuan me sukses.", "success");
+        } catch (err) {
+            console.error("Gabim te statistikat:", err);
+            setStatsMessage("Ndodhi një gabim gjatë llogaritjes së statistikave.", "error");
+        }
+    }
+
+    setTimeout(function () {
+        moveControlsToSidebarFinal();
+        updateNetworkStatsFinal();
+
+        if (document.getElementById("refresh-stats-btn")) {
+            document.getElementById("refresh-stats-btn").addEventListener("click", function () {
+                updateNetworkStatsFinal();
+            });
+        }
+
+        map.on("layeradd", function () {
+            setTimeout(function () {
+                moveControlsToSidebarFinal();
+                updateNetworkStatsFinal();
+            }, 100);
+        });
+
+        map.on("layerremove", function () {
+            setTimeout(function () {
+                moveControlsToSidebarFinal();
+                updateNetworkStatsFinal();
+            }, 100);
+        });
+    }, 700);
+
+});
+</script>
+</body>
 </html>
