@@ -506,6 +506,27 @@ height: 22px;
     font-size: 14px;
     border-bottom: 1px solid #e2e8ee;
 }
+.collapsible-section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+}
+
+.collapsible-section-title:hover {
+    background: #eaf2f7;
+}
+
+#stats-toggle-icon {
+    font-size: 12px;
+    font-weight: bold;
+    color: #123c56;
+}
+
+#stats-section-body.stats-collapsed {
+    display: none;
+}
 
 .sidebar-section-body {
     padding: 10px 12px;
@@ -1174,9 +1195,12 @@ height: 22px;
         <div id="route-message"></div>
     </div>
 </div>
-<div class="sidebar-section">
-    <div class="sidebar-section-title">Statistikat e rrjetit</div>
-    <div class="sidebar-section-body">
+<div class="sidebar-section" id="stats-section">
+    <div class="sidebar-section-title collapsible-section-title" id="stats-toggle-title">
+    <span>Statistikat e rrjetit</span>
+    <span id="stats-toggle-icon">►</span>
+</div>
+    <div class="sidebar-section-body" id="stats-section-body">
         <button id="refresh-stats-btn" class="sidebar-btn">Përditëso statistikat</button>
 
         <div class="sidebar-small-note">
@@ -3964,6 +3988,98 @@ window.addEventListener("load", function () {
         });
     }, 700);
 
+});
+</script>
+<script>
+window.addEventListener("load", function () {
+    var statsTitle = document.getElementById("stats-toggle-title");
+    var statsBody = document.getElementById("stats-section-body");
+    var statsIcon = document.getElementById("stats-toggle-icon");
+
+    if (statsTitle && statsBody && statsIcon) {
+        statsTitle.addEventListener("click", function () {
+            statsBody.classList.toggle("stats-collapsed");
+
+            if (statsBody.classList.contains("stats-collapsed")) {
+                statsIcon.textContent = "►";
+            } else {
+                statsIcon.textContent = "▼";
+            }
+        });
+    }
+});
+</script>
+<script>
+window.addEventListener("load", function () {
+    var sidebar = document.getElementById("geoportal-sidebar");
+    var toggleBtn = document.getElementById("sidebar-toggle-btn");
+
+    function updateSidebarTogglePosition() {
+        if (!sidebar || !toggleBtn) return;
+
+        var visibleCenter = sidebar.scrollTop + (sidebar.clientHeight / 2);
+        var btnHalf = toggleBtn.offsetHeight / 2;
+
+        toggleBtn.style.top = (visibleCenter - btnHalf) + "px";
+    }
+
+    if (sidebar && toggleBtn) {
+        updateSidebarTogglePosition();
+        sidebar.addEventListener("scroll", updateSidebarTogglePosition);
+        window.addEventListener("resize", updateSidebarTogglePosition);
+    }
+});
+</script>
+<script>
+window.addEventListener("load", function () {
+    var sidebar = document.getElementById("geoportal-sidebar");
+    var toggleBtn = document.getElementById("sidebar-toggle-btn");
+
+    if (!sidebar || !toggleBtn) return;
+
+    function updateSidebarTogglePosition() {
+        if (sidebar.classList.contains("minimized")) {
+            toggleBtn.style.top = "50%";
+            toggleBtn.style.transform = "translateY(-50%)";
+            return;
+        }
+
+        var visibleCenter = sidebar.scrollTop + (sidebar.clientHeight / 2);
+        var btnHalf = toggleBtn.offsetHeight / 2;
+
+        toggleBtn.style.top = (visibleCenter - btnHalf) + "px";
+        toggleBtn.style.transform = "none";
+    }
+
+    toggleBtn.onclick = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        sidebar.classList.toggle("minimized");
+
+        if (sidebar.classList.contains("minimized")) {
+            toggleBtn.innerHTML = "❯";
+            toggleBtn.style.top = "50%";
+            toggleBtn.style.transform = "translateY(-50%)";
+        } else {
+            toggleBtn.innerHTML = "❮";
+            updateSidebarTogglePosition();
+        }
+    };
+
+    sidebar.addEventListener("scroll", function () {
+        if (!sidebar.classList.contains("minimized")) {
+            updateSidebarTogglePosition();
+        }
+    });
+
+    window.addEventListener("resize", function () {
+        if (!sidebar.classList.contains("minimized")) {
+            updateSidebarTogglePosition();
+        }
+    });
+
+    updateSidebarTogglePosition();
 });
 </script>
 </body>
