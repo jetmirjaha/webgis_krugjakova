@@ -422,11 +422,12 @@ height: 22px;
 }
 /* SIDEBAR */
 #geoportal-sidebar {
+    --sidebar-width: 320px;
     position: fixed;
     top: 90px;
     left: 0;
     bottom: 32px;
-    width: 320px;
+    width: var(--sidebar-width);
     background: rgba(255, 255, 255, 0.96);
     border-radius: 0 14px 0 0;
     box-shadow: 0 8px 24px rgba(0,0,0,0.18);
@@ -439,36 +440,79 @@ height: 22px;
 }
 
 #geoportal-sidebar.minimized {
-    left: -300px;
-}
-
-@media screen and (max-width: 768px) {
-    #geoportal-sidebar.minimized {
-        left: -200px;
-    }
+    left: calc(-1 * var(--sidebar-width));
 }
 
 #sidebar-toggle-btn {
-    position: absolute;
+    position: fixed;
     top: 50%;
-    right: 2px;
+    left: var(--sidebar-width);
     transform: translateY(-50%);
-    width: 18px;
-    height: 42px;
-    background: #0d4c73;
+    width: 22px;
+    height: 74px;
+    background: #0d8b2a;
     color: #ffffff;
-    border-radius: 6px;
+    border-radius: 0 10px 10px 0;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    font-size: 13px;
+    font-size: 20px;
     font-weight: bold;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.22);
     z-index: 2500;
     user-select: none;
-    opacity: 0.88;
+    transition: left 0.35s ease, background 0.2s ease;
 }
+
+#sidebar-toggle-btn:hover {
+    background: #0a6f21;
+}
+
+#sidebar-toggle-btn.sidebar-toggle-minimized {
+    left: 0;
+}
+
+@media screen and (max-width: 1200px) {
+    #geoportal-sidebar {
+        --sidebar-width: 280px;
+    }
+    #sidebar-toggle-btn {
+        left: 280px;
+    }
+    #sidebar-toggle-btn.sidebar-toggle-minimized {
+        left: 0;
+    }
+}
+
+@media screen and (max-width: 900px) {
+    #geoportal-sidebar {
+        --sidebar-width: 250px;
+    }
+    #sidebar-toggle-btn {
+        left: 250px;
+    }
+    #sidebar-toggle-btn.sidebar-toggle-minimized {
+        left: 0;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    #geoportal-sidebar {
+        --sidebar-width: 250px;
+    }
+    #sidebar-toggle-btn {
+        left: 250px;
+        width: 20px;
+        height: 74px;
+        font-size: 18px;
+    }
+    #sidebar-toggle-btn.sidebar-toggle-minimized {
+        left: 0;
+    }
+}
+
+
 
 #sidebar-toggle-btn:hover {
     background: #083a58;
@@ -1054,7 +1098,6 @@ height: 22px;
         </div>
     </div>
 <div id="geoportal-sidebar">
-    <div id="sidebar-toggle-btn" title="Hap / Mbyll panelin">❮</div>
     <div class="sidebar-header">Paneli i Veglave</div>
     <div class="sidebar-content">
 
@@ -1270,6 +1313,8 @@ height: 22px;
 
     </div>
 </div>
+
+<div id="sidebar-toggle-btn" title="Hap / Mbyll panelin">❮</div>
 
 <div id="north-arrow-box">
     <div class="north-letter">N</div>
@@ -3452,31 +3497,8 @@ function updateSymbologyModeByField() {
         modeSelect.value = "graduated";
     }
 }
-function initSidebarToggle() {
-    var sidebar = document.getElementById("geoportal-sidebar");
-    var toggleBtn = document.getElementById("sidebar-toggle-btn");
 
-    if (!sidebar || !toggleBtn) return;
 
-    toggleBtn.addEventListener("click", function () {
-        sidebar.classList.toggle("minimized");
-
-        if (sidebar.classList.contains("minimized")) {
-            toggleBtn.innerHTML = "❯";
-        } else {
-            toggleBtn.innerHTML = "❮";
-        }
-    });
-}
-function syncSidebarTogglePosition() {
-    var sidebar = document.getElementById("geoportal-sidebar");
-    var toggleBtn = document.getElementById("sidebar-toggle-btn");
-
-    if (!sidebar || !toggleBtn) return;
-
-    var visibleCenter = sidebar.scrollTop + (sidebar.clientHeight / 2);
-    toggleBtn.style.top = visibleCenter + "px";
-}
 function refreshDefectLayer() {
     layer_Defektet.clearLayers();
     layer_Defektet.addData(defectPointsData);
@@ -3676,16 +3698,11 @@ map.on("click", function(e) {
 
 window.addEventListener("load", function () {
     setTimeout(function () {
-        moveLeafletControlsToSidebar();
-        populateAttributeFields();
-        initSidebarToggle();
-        syncSidebarTogglePosition();
-    }, 500);
+    moveLeafletControlsToSidebar();
+    populateAttributeFields();
+    initSidebarToggle();
+}, 500);
 
-    var sidebar = document.getElementById("geoportal-sidebar");
-    if (sidebar) {
-        sidebar.addEventListener("scroll", syncSidebarTogglePosition);
-    }
 
     document.getElementById("coord-search-btn").addEventListener("click", goToKosovarefCoordinates);
     document.getElementById("download-geojson-btn").addEventListener("click", function () {
@@ -4010,76 +4027,29 @@ window.addEventListener("load", function () {
 });
 </script>
 <script>
-window.addEventListener("load", function () {
-    var sidebar = document.getElementById("geoportal-sidebar");
-    var toggleBtn = document.getElementById("sidebar-toggle-btn");
-
-    function updateSidebarTogglePosition() {
-        if (!sidebar || !toggleBtn) return;
-
-        var visibleCenter = sidebar.scrollTop + (sidebar.clientHeight / 2);
-        var btnHalf = toggleBtn.offsetHeight / 2;
-
-        toggleBtn.style.top = (visibleCenter - btnHalf) + "px";
-    }
-
-    if (sidebar && toggleBtn) {
-        updateSidebarTogglePosition();
-        sidebar.addEventListener("scroll", updateSidebarTogglePosition);
-        window.addEventListener("resize", updateSidebarTogglePosition);
-    }
-});
-</script>
-<script>
-window.addEventListener("load", function () {
+function initSidebarToggle() {
     var sidebar = document.getElementById("geoportal-sidebar");
     var toggleBtn = document.getElementById("sidebar-toggle-btn");
 
     if (!sidebar || !toggleBtn) return;
-
-    function updateSidebarTogglePosition() {
-        if (sidebar.classList.contains("minimized")) {
-            toggleBtn.style.top = "50%";
-            toggleBtn.style.transform = "translateY(-50%)";
-            return;
-        }
-
-        var visibleCenter = sidebar.scrollTop + (sidebar.clientHeight / 2);
-        var btnHalf = toggleBtn.offsetHeight / 2;
-
-        toggleBtn.style.top = (visibleCenter - btnHalf) + "px";
-        toggleBtn.style.transform = "none";
-    }
 
     toggleBtn.onclick = function (e) {
         e.preventDefault();
         e.stopPropagation();
 
         sidebar.classList.toggle("minimized");
+        toggleBtn.classList.toggle("sidebar-toggle-minimized");
 
         if (sidebar.classList.contains("minimized")) {
             toggleBtn.innerHTML = "❯";
-            toggleBtn.style.top = "50%";
-            toggleBtn.style.transform = "translateY(-50%)";
         } else {
             toggleBtn.innerHTML = "❮";
-            updateSidebarTogglePosition();
         }
     };
+}
 
-    sidebar.addEventListener("scroll", function () {
-        if (!sidebar.classList.contains("minimized")) {
-            updateSidebarTogglePosition();
-        }
-    });
-
-    window.addEventListener("resize", function () {
-        if (!sidebar.classList.contains("minimized")) {
-            updateSidebarTogglePosition();
-        }
-    });
-
-    updateSidebarTogglePosition();
+window.addEventListener("load", function () {
+    initSidebarToggle();
 });
 </script>
 </body>
