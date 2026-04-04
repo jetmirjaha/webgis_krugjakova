@@ -823,6 +823,7 @@ height: 22px;
         margin-top: 5px !important;
     }
 }
+}
 
 @media screen and (max-width: 1200px) {
     #geoportal-sidebar {
@@ -1509,6 +1510,7 @@ map.addLayer(layer_Defektet);
             maxNativeZoom: 19
         });
         layer_OSMStandard_0;
+        map.addLayer(layer_OSMStandard_0);
         map.createPane('pane_GoogleSatellite_1');
         map.getPane('pane_GoogleSatellite_1').style.zIndex = 401;
         var layer_GoogleSatellite_1 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
@@ -2733,10 +2735,8 @@ function updateScaleDisplayFinal() {
     }
 }
 
-var coordUpdateScheduled = false;
-var lastCoordEvent = null;
+function updateCoordsFinal(e) {
 
-function renderCoordsFinal(e) {
     try {
 
         var projected = proj4("EPSG:4326", "KOSOVAREF01", [e.latlng.lng, e.latlng.lat]);
@@ -2745,29 +2745,15 @@ function renderCoordsFinal(e) {
         var projY = Number(projected[1]).toFixed(2);
 
         document.getElementById("bottom-left").innerHTML =
-            "Kosovaref01: Y = " + projX + " | X = " + projY;
+    "Kosovaref01: Y = " + projX + " | X = " + projY;
 
-    } catch (err) {
+    } catch (e) {
 
         document.getElementById("bottom-left").innerHTML =
             "Kosovaref01: -";
 
     }
-}
 
-function updateCoordsFinal(e) {
-    lastCoordEvent = e;
-
-    if (coordUpdateScheduled) return;
-
-    coordUpdateScheduled = true;
-
-    setTimeout(function () {
-        if (lastCoordEvent) {
-            renderCoordsFinal(lastCoordEvent);
-        }
-        coordUpdateScheduled = false;
-    }, 60);
 }
 
 window.addEventListener("load", function () {
@@ -2816,17 +2802,11 @@ window.locateCurrentUser = function() {
         return;
     }
 
-    var locateBtn = document.querySelector(".leaflet-control-locate-custom a");
-    if (locateBtn) {
-        locateBtn.style.pointerEvents = "none";
-        locateBtn.style.opacity = "0.6";
-    }
-
     navigator.geolocation.getCurrentPosition(
         function(position) {
             var lat = position.coords.latitude;
             var lng = position.coords.longitude;
-            var accuracy = position.coords.accuracy || 30;
+            var accuracy = position.coords.accuracy;
 
             if (currentLocationMarker) {
                 map.removeLayer(currentLocationMarker);
@@ -2850,15 +2830,7 @@ window.locateCurrentUser = function() {
                 fillOpacity: 0.15
             }).addTo(map);
 
-            map.flyTo([lat, lng], 18, {
-                animate: true,
-                duration: 0.8
-            });
-
-            if (locateBtn) {
-                locateBtn.style.pointerEvents = "";
-                locateBtn.style.opacity = "";
-            }
+            map.setView([lat, lng], 18);
         },
         function(error) {
             var msg = "Nuk u arrit të merret vendndodhja.";
@@ -2871,17 +2843,12 @@ window.locateCurrentUser = function() {
                 msg = "Kërkesa për vendndodhje skadoi.";
             }
 
-            if (locateBtn) {
-                locateBtn.style.pointerEvents = "";
-                locateBtn.style.opacity = "";
-            }
-
             alert(msg);
         },
         {
-            enableHighAccuracy: false,
-            timeout: 6000,
-            maximumAge: 30000
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
         }
     );
 };
