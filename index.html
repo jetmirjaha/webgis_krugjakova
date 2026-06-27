@@ -104,9 +104,12 @@ html, body {
 }
 
 .topbar-university-text .uni-line-3 {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     margin-top: 1px;
+    max-width: 430px;
+    text-align: center;
+    line-height: 1.15;
 }
 
 .topbar-logo {
@@ -1028,8 +1031,10 @@ height: 22px;
     <div class="uni-line-1">UNIVERSITETI I PRISHTINËS</div>
     <div class="uni-line-2">FAKULTETI I INXHINIERISË SË NDËRTIMIT</div>
     <div class="uni-line-3">Dega: Gjeodezi</div>
-    <div class="uni-line-3">Lënda: WebGIS</div>
-    <div class="uni-line-3">Profesori: Prof.Asoc.Dr. Bashkim IDRIZI</div>
+    <div class="uni-line-3"><b>PUNIM I DIPLOMËS MASTER</b></div>
+    <div class="uni-line-3">Aplikimi i GIS për identifikimin e aseteve kritike</div>
+    <div class="uni-line-3">të ujësjellësit në funksion të menaxhimit dhe planifikimit të investimeve</div>
+    <div class="uni-line-3">Mentori: Prof.Asoc.Dr. Besim AJVAZI</div>
 </div>
         </div>
     </div>
@@ -1260,6 +1265,8 @@ height: 22px;
         <script src="data/StacionetePompimit_9.js"></script>
         <script src="data/Ujmatsitkryesorzonal_10.js"></script>
         <script src="data/Valvulat_11.js"></script>
+<script src="data/Gypat_dhe_kritikaliteti_12.js"></script>
+<script src="data/Gypat_kritik_me_kosto_13.js"></script>
         <script>
         var highlightLayer;
 var currentLocationMarker = null;
@@ -2301,6 +2308,117 @@ layer.on('click', function() {
         });
         bounds_group.addLayer(layer_Valvulat_11);
         map.addLayer(layer_Valvulat_11);
+function fmtInt(v) {
+    if (v === null || v === undefined || v === '') return '';
+    var n = Number(v);
+    return isNaN(n) ? String(v) : String(Math.round(n));
+}
+
+function fmtMoney(v) {
+    if (v === null || v === undefined || v === '') return '';
+    var n = Number(v);
+    return isNaN(n) ? String(v) : n.toLocaleString('sq-AL', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    }) + ' €';
+}
+
+function pop_Gypat_kritik_me_kosto_13(feature, layer) {
+    var p = feature.properties || {};
+
+    var popupContent = '<table>\
+        <tr><td colspan="2"><strong>Gyp kritik me prioritet zëvendësimi</strong></td></tr>\
+        <tr><th>Lokacioni</th><td>' + (p.Lokacioni || '') + '</td></tr>\
+        <tr><th>Fshati/Qyteti</th><td>' + (p.Fshati_Qyt || '') + '</td></tr>\
+        <tr><th>Materiali</th><td>' + (p.Materiali || '') + '</td></tr>\
+        <tr><th>DN ekzistues</th><td>' + fmtInt(p.DN_Vjeter) + '</td></tr>\
+        <tr><th>DN i ri PE</th><td>' + fmtInt(p.DN_Ri) + '</td></tr>\
+        <tr><th>Nr. defekteve</th><td>' + fmtInt(p.Nr_defekte) + '</td></tr>\
+        <tr><th>Klasa kritikalitetit</th><td><strong>' + fmtInt(p.Klasa_krit) + '</strong></td></tr>\
+        <tr><th>Mosha</th><td>' + fmtInt(p.Mosha) + '</td></tr>\
+        <tr><th>Jeta e mbetur</th><td>' + fmtInt(p.Jeta_mbetu) + '</td></tr>\
+        <tr><th>Kosto totale</th><td><strong>' + fmtMoney(p.Kosto_Tota) + '</strong></td></tr>\
+    </table>';
+
+    layer.bindPopup(popupContent, { maxHeight: 500 });
+}
+
+function style_Gypat_kritik_me_kosto_13_0(feature) {
+    var k = Number((feature.properties || {}).Klasa_krit || 0);
+    return {
+        pane: 'pane_Gypat_kritik_me_kosto_13',
+        opacity: 1,
+        color: k >= 6 ? '#ff0000' : '#ff9900',
+        weight: k >= 6 ? 6 : 5,
+        fillOpacity: 0,
+        interactive: true
+    };
+}
+
+map.createPane('pane_Gypat_kritik_me_kosto_13');
+map.getPane('pane_Gypat_kritik_me_kosto_13').style.zIndex = 413;
+
+var layer_Gypat_kritik_me_kosto_13 = new L.geoJson(json_Gypat_kritik_me_kosto_13, {
+    attribution: '',
+    interactive: true,
+    pane: 'pane_Gypat_kritik_me_kosto_13',
+    onEachFeature: pop_Gypat_kritik_me_kosto_13,
+    style: style_Gypat_kritik_me_kosto_13_0
+});
+
+bounds_group.addLayer(layer_Gypat_kritik_me_kosto_13);
+map.addLayer(layer_Gypat_kritik_me_kosto_13);
+function pop_Gypat_dhe_kritikaliteti_12(feature, layer) {
+    var p = feature.properties || {};
+
+    var popupContent = '<table>\
+        <tr><td colspan="2"><strong>Gypat sipas kritikalitetit</strong></td></tr>\
+        <tr><th>Lokacioni</th><td>'+(p.Lokacioni||'')+'</td></tr>\
+        <tr><th>Fshati</th><td>'+(p.Fshati_Qyt||'')+'</td></tr>\
+        <tr><th>Materiali</th><td>'+(p.Materiali||'')+'</td></tr>\
+        <tr><th>DN</th><td>'+fmtInt(p.Diamet_DN)+'</td></tr>\
+        <tr><th>Nr. defekteve</th><td>'+fmtInt(p.Nr_defekte)+'</td></tr>\
+        <tr><th>Mosha</th><td>'+fmtInt(p.Mosha)+'</td></tr>\
+        <tr><th>Jeta e mbetur</th><td>'+fmtInt(p.Jeta_mbetu)+'</td></tr>\
+        <tr><th>Klasa</th><td><b>'+fmtInt(p.Klasa_krit)+'</b></td></tr>\
+    </table>';
+
+    layer.bindPopup(popupContent,{maxHeight:500});
+}
+
+function style_Gypat_dhe_kritikaliteti_12(feature){
+    var k=Number(feature.properties.Klasa_krit||0);
+
+    return{
+        pane:'pane_Gypat_dhe_kritikaliteti_12',
+        opacity:1,
+        color:
+            k==6?'#ff0000':
+            k==5?'#ff9900':
+            k==4?'#ffff00':
+            '#2c5bf6',
+        weight:
+            k==6?5:
+            k==5?4:
+            k==4?3:2,
+        fillOpacity:0,
+        interactive:true
+    };
+}
+
+map.createPane('pane_Gypat_dhe_kritikaliteti_12');
+map.getPane('pane_Gypat_dhe_kritikaliteti_12').style.zIndex=412;
+
+var layer_Gypat_dhe_kritikaliteti_12=new L.geoJson(json_Gypat_dhe_kritikaliteti_12,{
+    attribution:'',
+    interactive:true,
+    pane:'pane_Gypat_dhe_kritikaliteti_12',
+    onEachFeature:pop_Gypat_dhe_kritikaliteti_12,
+    style:style_Gypat_dhe_kritikaliteti_12
+});
+
+bounds_group.addLayer(layer_Gypat_dhe_kritikaliteti_12);
+
         function updatePointLayerVisibility() {
     var z = map.getZoom();
 
@@ -2416,6 +2534,8 @@ updatePointLayerVisibility();
             {label: '<img src="legend/Rezervuart_8.png" /> Rezervuarët', layer: layer_Rezervuart_8},
             {label: '<img src="legend/Hidrantt_7.png" /> Hidrantët', layer: layer_Hidrantt_7},
             {label: '<img src="legend/GypateUjsjellsit_6.png" /> Gypat e Ujësjellësit', layer: layer_GypateUjsjellsit_6},
+{label: '<span style="display:inline-block;width:20px;border-top:5px solid #ff0000;margin-right:4px;"></span> Gypat kritikë me kosto', layer: layer_Gypat_kritik_me_kosto_13},
+{label: '<span style="display:inline-block;width:20px;border-top:5px solid #ff9900;margin-right:4px;"></span> Gypat sipas kritikalitetit', layer: layer_Gypat_dhe_kritikaliteti_12},
             {label: '<img src="legend/Valvulateajrit_5.png" /> Valvulat e ajrit', layer: layer_Valvulateajrit_5},
             {label: '<img src="legend/Burimeteujit_4.png" /> Burimet e ujit', layer: layer_Burimeteujit_4},
 {label: 'Pikat e defekteve', layer: layer_Defektet},]},
